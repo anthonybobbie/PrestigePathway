@@ -8,3 +8,7 @@
 /backend/PrestigePathway/PrestigePathway.Api/obj
 /backend/PrestigePathway/.vs/PrestigePathway
 /frontend/node_modules
+/backend/PrestigePathway/PrestigePathway.Api/bin/Debug/net8.0
+/backend/PrestigePathway/PrestigePathway.DataAccessLayer/bin/Debug/net8.0
+/backend/PrestigePathway/PrestigePathway.Test/bin/Debug/net8.0/cs
+/backend/PrestigePathway/PrestigePathway.Test/bin/Debug/net8.0
