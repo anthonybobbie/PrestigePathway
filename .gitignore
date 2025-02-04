@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/backend/PrestigePathway/PrestigePathway.Test/obj
+/backend/PrestigePathway/PrestigePathway.DataAccessLayer/obj
+/backend/PrestigePathway/PrestigePathway.Api/obj
+/backend/PrestigePathway/.vs/PrestigePathway
