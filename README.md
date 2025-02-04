@@ -13,23 +13,27 @@ PrestigePathway is a business application designed to provide premium social ser
 
 ## Technologies
 
-- **Backend**: ASP.NET Core, Entity Framework Core (Code First Migration)
+- **Backend**: .NET 8 (using Visual Studio 2022), Entity Framework Core (Code First Migration)
 - **Database**: Microsoft SQL Server
-- **Frontend**: (To be determined, e.g., React, Angular, or Blazor)
+- **Frontend**: Vite + React 18 with Material-UI
 - **Authentication**: JWT or OAuth2 (for secure access)
 - **Hosting**: Azure, AWS, or Docker containers
 
 ## Getting Started
 
+Follow these steps to set up and run all parts of the PrestigePathway project.
+
 ### Prerequisites
 
-- [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) or [Visual Studio Code](https://code.visualstudio.com/)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
+- [Node.js](https://nodejs.org/) (LTS version recommended)
 
-### Installation
+### 1. Clone the Repository
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/PrestigePathway.git
-   cd PrestigePathway
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/your-username/PrestigePathway.git
+cd PrestigePathway
