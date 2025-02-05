@@ -1,4 +1,8 @@
-﻿namespace PrestigePathway.DataAccessLayer
+﻿using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer.ModelsFolder;
+using PrestigePathway.DataAccessLayer.NewFolder;
+
+namespace PrestigePathway.DataAccessLayer
 {
 
 
@@ -16,7 +20,7 @@
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Location> Locations { get; set; }
-        public DbSet<StaffAssignment> StaffAssignments { get; set; }
+        public DbSet<StaffAssistant> StaffAssistant { get; set; }
         public DbSet<ServiceLocation> ServiceLocations { get; set; }
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
@@ -41,7 +45,7 @@
                 .HasConversion<string>();
 
             // Configure relationships
-            modelBuilder.Entity<StaffAssignment>()
+            modelBuilder.Entity<StaffAssistant>()
                 .HasKey(sa => new { sa.StaffID, sa.BookingID });
 
             modelBuilder.Entity<ServiceLocation>()
