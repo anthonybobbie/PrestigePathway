@@ -8,7 +8,7 @@ namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BookingController : ControllerBase
     {
         private readonly SocialServicesDbContext _context;
@@ -35,7 +35,7 @@ namespace PrestigePathway.Api.Controllers
             var booking = await _context.Bookings
                 .Include(b => b.Client)
                 .Include(b => b.Service)
-                .FirstOrDefaultAsync(b => b.BookingID == id);
+                .FirstOrDefaultAsync(b => b.ID == id);
 
             if (booking == null)
             {
@@ -52,14 +52,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.BookingID }, booking);
+            return CreatedAtAction(nameof(GetBooking), new { id = booking.ID }, booking);
         }
 
         // PUT: api/Booking/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
-            if (id != booking.BookingID)
+            if (id != booking.ID)
             {
                 return BadRequest();
             }
@@ -72,7 +72,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Bookings.Any(e => e.BookingID == id))
+                if (!_context.Bookings.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

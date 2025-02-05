@@ -14,7 +14,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int StaffAssistantID { get; set; }
+        public int ID { get; set; }
 
         [ForeignKey("Staff")]
         public int StaffID { get; set; }

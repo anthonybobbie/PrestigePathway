@@ -13,7 +13,7 @@ namespace PrestigePathway.DataAccessLayer.ModelsFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int TestimonialID { get; set; }
+        public int ID { get; set; }
 
         [ForeignKey("Client")]
         public int ClientID { get; set; } // The client who provided the testimonial

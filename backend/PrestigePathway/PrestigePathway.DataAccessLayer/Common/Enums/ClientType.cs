@@ -9,6 +9,9 @@ namespace PrestigePathway.DataAccessLayer.Common.Enums
     public enum ClientType
     {
         Expatriate,
-        Local
+        Local,
+        Individual,
+        Corporate,
+        Government
     }
 }

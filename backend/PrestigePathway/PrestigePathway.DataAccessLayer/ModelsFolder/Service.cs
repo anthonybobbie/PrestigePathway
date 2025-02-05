@@ -14,7 +14,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ServiceID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -32,8 +32,6 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
         public int? DurationHours { get; set; }
 
         public bool IsActive { get; set; } = true;
-
-        public ICollection<Booking> Bookings { get; set; }
         public ICollection<ServiceLocation> ServiceLocations { get; set; }
     }
 }

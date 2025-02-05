@@ -14,7 +14,7 @@ namespace PrestigePathway.DataAccessLayer.ModelsFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int StaffID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         [StringLength(50)]

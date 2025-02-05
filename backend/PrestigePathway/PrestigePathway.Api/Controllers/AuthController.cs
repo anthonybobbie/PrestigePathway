@@ -21,7 +21,7 @@ namespace PrestigePathway.Api.Controllers
         // Mock user store (replace with a database in production)
         private List<User> Users = new List<User>
         {
-            new User { Id = 1, Username = "admin", Password = "admin123" } // Use hashed passwords in production
+            new User { ID = 1, Username = "admin", Password = "admin123" } // Use hashed passwords in production
         };
 
         // POST: api/Auth/Login
@@ -49,7 +49,7 @@ namespace PrestigePathway.Api.Controllers
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
                     new Claim(ClaimTypes.Name, user.Username)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryInMinutes"])),

@@ -13,7 +13,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClientID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -42,7 +42,5 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
         public string? Notes { get; set; }
-
-        public ICollection<Booking> Bookings { get; set; }
     }
 }

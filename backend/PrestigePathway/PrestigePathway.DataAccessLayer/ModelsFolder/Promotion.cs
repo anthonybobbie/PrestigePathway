@@ -13,7 +13,7 @@ namespace PrestigePathway.DataAccessLayer.ModelsFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PromotionID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         [StringLength(100)]

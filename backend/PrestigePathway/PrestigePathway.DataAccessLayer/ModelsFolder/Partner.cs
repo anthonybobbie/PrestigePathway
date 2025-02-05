@@ -12,7 +12,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PartnerID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         [StringLength(100)]

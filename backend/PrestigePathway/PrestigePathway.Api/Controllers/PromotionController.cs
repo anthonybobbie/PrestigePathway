@@ -33,7 +33,7 @@ namespace PrestigePathway.Api.Controllers
         {
             var promotion = await _context.Promotions
                 .Include(p => p.Service) // Include related Service data
-                .FirstOrDefaultAsync(p => p.PromotionID == id);
+                .FirstOrDefaultAsync(p => p.ID == id);
 
             if (promotion == null)
             {
@@ -50,14 +50,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Promotions.Add(promotion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPromotion), new { id = promotion.PromotionID }, promotion);
+            return CreatedAtAction(nameof(GetPromotion), new { id = promotion.ID }, promotion);
         }
 
         // PUT: api/Promotion/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPromotion(int id, Promotion promotion)
         {
-            if (id != promotion.PromotionID)
+            if (id != promotion.ID)
             {
                 return BadRequest();
             }
@@ -70,7 +70,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Promotions.Any(e => e.PromotionID == id))
+                if (!_context.Promotions.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

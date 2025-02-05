@@ -46,14 +46,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Partners.Add(partner);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPartner), new { id = partner.PartnerID }, partner);
+            return CreatedAtAction(nameof(GetPartner), new { id = partner.ID }, partner);
         }
 
         // PUT: api/Partner/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPartner(int id, Partner partner)
         {
-            if (id != partner.PartnerID)
+            if (id != partner.ID)
             {
                 return BadRequest();
             }
@@ -66,7 +66,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Partners.Any(e => e.PartnerID == id))
+                if (!_context.Partners.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

@@ -33,7 +33,7 @@ namespace PrestigePathway.Api.Controllers
         {
             var testimonial = await _context.Testimonials
                 .Include(t => t.Client) // Include related Client data
-                .FirstOrDefaultAsync(t => t.TestimonialID == id);
+                .FirstOrDefaultAsync(t => t.ID == id);
 
             if (testimonial == null)
             {
@@ -50,14 +50,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Testimonials.Add(testimonial);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTestimonial), new { id = testimonial.TestimonialID }, testimonial);
+            return CreatedAtAction(nameof(GetTestimonial), new { id = testimonial.ID }, testimonial);
         }
 
         // PUT: api/Testimonial/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTestimonial(int id, Testimonial testimonial)
         {
-            if (id != testimonial.TestimonialID)
+            if (id != testimonial.ID)
             {
                 return BadRequest();
             }
@@ -70,7 +70,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Testimonials.Any(e => e.TestimonialID == id))
+                if (!_context.Testimonials.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

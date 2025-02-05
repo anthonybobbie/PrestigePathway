@@ -33,7 +33,7 @@ namespace PrestigePathway.Api.Controllers
         {
             var payment = await _context.Payments
                 .Include(p => p.Booking)
-                .FirstOrDefaultAsync(p => p.PaymentID == id);
+                .FirstOrDefaultAsync(p => p.ID == id);
 
             if (payment == null)
             {
@@ -50,14 +50,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPayment), new { id = payment.PaymentID }, payment);
+            return CreatedAtAction(nameof(GetPayment), new { id = payment.ID }, payment);
         }
 
         // PUT: api/Payment/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPayment(int id, Payment payment)
         {
-            if (id != payment.PaymentID)
+            if (id != payment.ID)
             {
                 return BadRequest();
             }
@@ -70,7 +70,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Payments.Any(e => e.PaymentID == id))
+                if (!_context.Payments.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

@@ -35,7 +35,7 @@ namespace PrestigePathway.Api.Controllers
             var staffAssistant = await _context.StaffAssistant
                 .Include(sa => sa.Staff)
                 .Include(sa => sa.Booking)
-                .FirstOrDefaultAsync(sa => sa.StaffAssistantID == id);
+                .FirstOrDefaultAsync(sa => sa.ID == id);
 
             if (staffAssistant == null)
             {
@@ -52,14 +52,14 @@ namespace PrestigePathway.Api.Controllers
             _context.StaffAssistant.Add(staffAssistant);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetStaffAssistant), new { id = staffAssistant.StaffAssistantID }, staffAssistant);
+            return CreatedAtAction(nameof(GetStaffAssistant), new { id = staffAssistant.ID }, staffAssistant);
         }
 
         // PUT: api/StaffAssistant/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStaffAssistant(int id, StaffAssistant staffAssistant)
         {
-            if (id != staffAssistant.StaffAssistantID)
+            if (id != staffAssistant.ID)
             {
                 return BadRequest();
             }
@@ -72,7 +72,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.StaffAssistant.Any(e => e.StaffAssistantID == id))
+                if (!_context.StaffAssistant.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }

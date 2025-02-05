@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 
 namespace PrestigePathway.DataAccessLayer.NewFolder
@@ -13,7 +8,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int BookingID { get; set; }
+        public int ID { get; set; }
 
         [ForeignKey("Client")]
         public int ClientID { get; set; }

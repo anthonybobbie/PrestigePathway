@@ -13,6 +13,11 @@ namespace PrestigePathway.DataAccessLayer.Common.Enums
         Legal,
         Cultural,
         Health,
-        Events
+        Events,
+        Hair,
+        Nails,
+        Wellness,
+        SkinCare,
+        Fitness
     }
 }

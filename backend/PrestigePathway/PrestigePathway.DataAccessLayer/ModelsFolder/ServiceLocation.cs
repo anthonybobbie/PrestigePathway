@@ -12,7 +12,7 @@ namespace PrestigePathway.DataAccessLayer.NewFolder
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ServiceLocationID { get; set; }
+        public int ID { get; set; }
 
         [ForeignKey("Service")]
         public int ServiceID { get; set; }

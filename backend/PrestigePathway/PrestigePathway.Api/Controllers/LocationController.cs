@@ -46,14 +46,14 @@ namespace PrestigePathway.Api.Controllers
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetLocation), new { id = location.LocationID }, location);
+            return CreatedAtAction(nameof(GetLocation), new { id = location.ID }, location);
         }
 
         // PUT: api/Location/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLocation(int id, Location location)
         {
-            if (id != location.LocationID)
+            if (id != location.ID)
             {
                 return BadRequest();
             }
@@ -66,7 +66,7 @@ namespace PrestigePathway.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Locations.Any(e => e.LocationID == id))
+                if (!_context.Locations.Any(e => e.ID == id))
                 {
                     return NotFound();
                 }
