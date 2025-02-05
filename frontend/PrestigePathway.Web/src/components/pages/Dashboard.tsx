@@ -1,6 +1,6 @@
 import React from "react"
 // react component 
-export function HomePage(){
+export function Dashboard(){
     return (
         <div>
             Dashboard Page
