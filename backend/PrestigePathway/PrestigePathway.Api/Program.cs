@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PrestigePathway.BusinessLogicLayer.Services;
 using PrestigePathway.DataAccessLayer;
+using PrestigePathway.DataAccessLayer.Repositories;
 using System.Text;
 
 namespace PrestigePathway.Api
@@ -13,6 +15,7 @@ namespace PrestigePathway.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // jwt
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
@@ -40,6 +43,14 @@ namespace PrestigePathway.Api
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<SocialServicesDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
+
+            // Repositories
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();
+
+            // Services
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IClientService, ClientService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

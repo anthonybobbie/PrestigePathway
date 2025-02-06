@@ -1,41 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using PrestigePathway.BusinessLogicLayer.Services;
 using PrestigePathway.DataAccessLayer.NewFolder;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BookingController : ControllerBase
     {
-        private readonly SocialServicesDbContext _context;
+        private readonly IBookingService _bookingService;
 
-        public BookingController(SocialServicesDbContext context)
+        public BookingController(IBookingService bookingService)
         {
-            _context = context;
+            _bookingService = bookingService;
         }
 
         // GET: api/Booking
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
-            return await _context.Bookings
-                .Include(b => b.Client)
-                .Include(b => b.Service)
-                .ToListAsync();
+            var bookings = await _bookingService.GetAllBookingsAsync();
+            return Ok(bookings);
         }
 
         // GET: api/Booking/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(int id)
         {
-            var booking = await _context.Bookings
-                .Include(b => b.Client)
-                .Include(b => b.Service)
-                .FirstOrDefaultAsync(b => b.ID == id);
+            var booking = await _bookingService.GetBookingByIdAsync(id);
 
             if (booking == null)
             {
@@ -49,9 +46,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-
+            await _bookingService.AddBookingAsync(booking);
             return CreatedAtAction(nameof(GetBooking), new { id = booking.ID }, booking);
         }
 
@@ -64,24 +59,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Bookings.Any(e => e.ID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _bookingService.UpdateBookingAsync(booking);
             return NoContent();
         }
 
@@ -89,15 +67,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
-
+            await _bookingService.DeleteBookingAsync(id);
             return NoContent();
         }
     }
