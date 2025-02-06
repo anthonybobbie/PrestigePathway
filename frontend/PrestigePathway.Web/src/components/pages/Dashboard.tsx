@@ -1,9 +1,15 @@
-import React from "react"
+import PageWrapper from "../shared/PageWrapper"
 // react component 
-export function Dashboard(){
+export function Dashboard() {
     return (
-        <div>
-            Dashboard Page
-        </div>
+        <PageWrapper>
+            <div>
+                Dashboard Page
+            </div>
+        </PageWrapper>
+
     )
 }
+
+
+

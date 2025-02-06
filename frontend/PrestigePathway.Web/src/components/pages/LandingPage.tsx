@@ -1,13 +1,15 @@
 import { Box, Container, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Import for navigation
 import imagine from '../../assets/imagine.jpg'; // Adjust the path if necessary
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function LandingPage() {
+  const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate(); // Hook for navigation
 
   // Function to handle login navigation
   const handleLogin = () => {
-    const isAuthenticated = localStorage.getItem("userToken"); // Example: Replace with actual auth check
 
     if (isAuthenticated) {
       navigate("/dashboard"); // Redirect authenticated users to the dashboard
