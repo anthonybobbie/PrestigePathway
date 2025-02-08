@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using PrestigePathway.BusinessLogicLayer.Services;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;

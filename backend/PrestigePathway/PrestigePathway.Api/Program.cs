@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +5,13 @@ using PrestigePathway.BusinessLogicLayer.Services;
 using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Repositories;
 using System.Text;
+using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.Services;
+using PrestigePathway.DataAccessLayer.Services;
+using FluentValidation;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api
 {
@@ -19,6 +25,7 @@ namespace PrestigePathway.Api
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
+            // Add authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,17 +47,50 @@ namespace PrestigePathway.Api
 
             builder.Services.AddAuthorization();
 
+            // Add CORS services
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigins", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Replace with your frontend URL
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
 
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<SocialServicesDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
+            builder.Services.AddDbContext<SocialServicesDbContext>(option =>
+                option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
-            // Repositories
+            // RepositoryAbstractions
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+            builder.Services.AddScoped<IServiceLocationRepository, ServiceLocationRepository>();
+            builder.Services.AddScoped<IStaffAssistantRepository, StaffAssistantRepository>();
+            builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+            builder.Services.AddScoped<ITestimonialRepository, TestimonialRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            // Services
+            // ServiceAbstractions
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IClientService, ClientService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
+            builder.Services.AddScoped<IPartnerService, PartnerService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IPromotionService, PromotionService>();
+            builder.Services.AddScoped<IServiceService, ServiceService>();
+            builder.Services.AddScoped<IServiceLocationService,  ServiceLocationService>();
+            builder.Services.AddScoped<IStaffAssistantService, StaffAssistantService>();
+            builder.Services.AddScoped<IStaffService, StaffService>();
+            builder.Services.AddScoped<ITestimonialService, TestimonialService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IValidator<User>, UserValidator>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -58,7 +98,7 @@ namespace PrestigePathway.Api
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -67,9 +107,13 @@ namespace PrestigePathway.Api
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            // Enable CORS
+            app.UseCors("AllowSpecificOrigins");
+
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

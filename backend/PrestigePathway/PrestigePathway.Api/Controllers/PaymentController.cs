@@ -1,39 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PaymentController : ControllerBase
     {
-        private readonly SocialServicesDbContext _context;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentController(SocialServicesDbContext context)
+        public PaymentController(IPaymentService paymentService)
         {
-            _context = context;
+            _paymentService = paymentService;
         }
 
         // GET: api/Payment
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
         {
-            return await _context.Payments
-                .Include(p => p.Booking)
-                .ToListAsync();
+            var payments = await _paymentService.GetAllPaymentsAsync();
+            return Ok(payments);
         }
 
         // GET: api/Payment/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Payment>> GetPayment(int id)
         {
-            var payment = await _context.Payments
-                .Include(p => p.Booking)
-                .FirstOrDefaultAsync(p => p.ID == id);
+            var payment = await _paymentService.GetPaymentByIdAsync(id);
 
             if (payment == null)
             {
@@ -47,9 +46,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Payment>> PostPayment(Payment payment)
         {
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
-
+            await _paymentService.AddPaymentAsync(payment);
             return CreatedAtAction(nameof(GetPayment), new { id = payment.ID }, payment);
         }
 
@@ -62,24 +59,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(payment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Payments.Any(e => e.ID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _paymentService.UpdatePaymentAsync(payment);
             return NoContent();
         }
 
@@ -87,15 +67,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment(int id)
         {
-            var payment = await _context.Payments.FindAsync(id);
-            if (payment == null)
-            {
-                return NotFound();
-            }
-
-            _context.Payments.Remove(payment);
-            await _context.SaveChangesAsync();
-
+            await _paymentService.DeletePaymentAsync(id);
             return NoContent();
         }
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PrestigePathway.DataAccessLayer.ModelsFolder;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer
 {
@@ -24,6 +24,7 @@ namespace PrestigePathway.DataAccessLayer
         public DbSet<ServiceLocation> ServiceLocations { get; set; }
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,10 @@ namespace PrestigePathway.DataAccessLayer
             modelBuilder.Entity<Service>()
                 .Property(s => s.IsActive)
                 .HasDefaultValue(true);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
         }
     }
 }

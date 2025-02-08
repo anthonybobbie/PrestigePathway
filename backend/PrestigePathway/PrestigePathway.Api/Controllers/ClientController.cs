@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.BusinessLogicLayer.Services;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {

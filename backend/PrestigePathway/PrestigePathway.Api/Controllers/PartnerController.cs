@@ -1,35 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PartnerController : ControllerBase
     {
-        private readonly SocialServicesDbContext _context;
+        private readonly IPartnerService _partnerService;
 
-        public PartnerController(SocialServicesDbContext context)
+        public PartnerController(IPartnerService partnerService)
         {
-            _context = context;
+            _partnerService = partnerService;
         }
 
         // GET: api/Partner
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Partner>>> GetPartners()
         {
-            return await _context.Partners.ToListAsync();
+            var partners = await _partnerService.GetAllPartnersAsync();
+            return Ok(partners);
         }
 
         // GET: api/Partner/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Partner>> GetPartner(int id)
         {
-            var partner = await _context.Partners.FindAsync(id);
+            var partner = await _partnerService.GetPartnerByIdAsync(id);
 
             if (partner == null)
             {
@@ -43,9 +46,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Partner>> PostPartner(Partner partner)
         {
-            _context.Partners.Add(partner);
-            await _context.SaveChangesAsync();
-
+            await _partnerService.AddPartnerAsync(partner);
             return CreatedAtAction(nameof(GetPartner), new { id = partner.ID }, partner);
         }
 
@@ -58,24 +59,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(partner).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Partners.Any(e => e.ID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _partnerService.UpdatePartnerAsync(partner);
             return NoContent();
         }
 
@@ -83,15 +67,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePartner(int id)
         {
-            var partner = await _context.Partners.FindAsync(id);
-            if (partner == null)
-            {
-                return NotFound();
-            }
-
-            _context.Partners.Remove(partner);
-            await _context.SaveChangesAsync();
-
+            await _partnerService.DeletePartnerAsync(id);
             return NoContent();
         }
     }

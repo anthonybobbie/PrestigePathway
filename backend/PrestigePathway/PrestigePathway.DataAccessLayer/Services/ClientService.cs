@@ -1,5 +1,6 @@
-﻿using PrestigePathway.DataAccessLayer.NewFolder;
-using PrestigePathway.DataAccessLayer.Repositories;
+﻿using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {

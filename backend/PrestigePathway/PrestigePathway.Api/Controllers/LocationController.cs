@@ -1,35 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class LocationController : ControllerBase
     {
-        private readonly SocialServicesDbContext _context;
+        private readonly ILocationService _locationService;
 
-        public LocationController(SocialServicesDbContext context)
+        public LocationController(ILocationService locationService)
         {
-            _context = context;
+            _locationService = locationService;
         }
 
         // GET: api/Location
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         {
-            return await _context.Locations.ToListAsync();
+            var locations = await _locationService.GetAllLocationsAsync();
+            return Ok(locations);
         }
 
         // GET: api/Location/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Location>> GetLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _locationService.GetLocationByIdAsync(id);
 
             if (location == null)
             {
@@ -43,9 +46,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)
         {
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
-
+            await _locationService.AddLocationAsync(location);
             return CreatedAtAction(nameof(GetLocation), new { id = location.ID }, location);
         }
 
@@ -58,24 +59,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(location).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Locations.Any(e => e.ID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _locationService.UpdateLocationAsync(location);
             return NoContent();
         }
 
@@ -83,15 +67,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
-            if (location == null)
-            {
-                return NotFound();
-            }
-
-            _context.Locations.Remove(location);
-            await _context.SaveChangesAsync();
-
+            await _locationService.DeleteLocationAsync(id);
             return NoContent();
         }
     }

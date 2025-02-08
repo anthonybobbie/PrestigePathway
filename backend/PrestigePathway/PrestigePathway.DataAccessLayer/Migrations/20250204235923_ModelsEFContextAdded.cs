@@ -109,7 +109,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Services",
+                name: "ServiceAbstractions",
                 columns: table => new
                 {
                     ServiceID = table.Column<int>(type: "int", nullable: false)
@@ -158,7 +158,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     table.ForeignKey(
                         name: "FK_Bookings_Services_ServiceID",
                         column: x => x.ServiceID,
-                        principalTable: "Services",
+                        principalTable: "ServiceAbstractions",
                         principalColumn: "ServiceID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -183,7 +183,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     table.ForeignKey(
                         name: "FK_Promotions_Services_ServiceID",
                         column: x => x.ServiceID,
-                        principalTable: "Services",
+                        principalTable: "ServiceAbstractions",
                         principalColumn: "ServiceID");
                 });
 
@@ -209,7 +209,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     table.ForeignKey(
                         name: "FK_ServiceLocations_Services_ServiceID",
                         column: x => x.ServiceID,
-                        principalTable: "Services",
+                        principalTable: "ServiceAbstractions",
                         principalColumn: "ServiceID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -306,7 +306,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_PartnerID",
-                table: "Services",
+                table: "ServiceAbstractions",
                 column: "PartnerID");
 
             migrationBuilder.CreateIndex(
@@ -351,7 +351,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "Services");
+                name: "ServiceAbstractions");
 
             migrationBuilder.DropTable(
                 name: "Partners");

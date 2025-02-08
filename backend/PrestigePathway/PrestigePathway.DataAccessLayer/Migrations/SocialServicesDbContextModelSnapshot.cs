@@ -22,118 +22,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Promotion", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PromotionName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("ServiceID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ServiceID");
-
-                    b.ToTable("Promotions");
-                });
-
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Staff", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Staff");
-                });
-
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Testimonial", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("ClientID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TestimonialDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ClientID");
-
-                    b.ToTable("Testimonials");
-                });
-
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Booking", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Booking", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -169,10 +58,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceID");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Client", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Client", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -221,10 +110,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Location", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Location", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -267,10 +156,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Partner", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Partner", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -303,10 +192,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Partners");
+                    b.ToTable("Partners", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Payment", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Payment", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -344,10 +233,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("TransactionID")
                         .IsUnique();
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Service", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Service", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -385,10 +274,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("PartnerID");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.ServiceLocation", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceLocation", b =>
                 {
                     b.Property<int>("ServiceID")
                         .HasColumnType("int");
@@ -409,10 +298,10 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("ServiceLocations");
+                    b.ToTable("ServiceLocations", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.StaffAssistant", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.StaffAssistant", b =>
                 {
                     b.Property<int>("StaffID")
                         .HasColumnType("int");
@@ -436,38 +325,152 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("BookingID");
 
-                    b.ToTable("StaffAssistant");
+                    b.ToTable("StaffAssistant", (string)null);
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.User", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasFilter("[Username] IS NOT NULL");
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Promotion", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceID");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Service");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PromotionName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ServiceID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ServiceID");
+
+                    b.ToTable("Promotions", (string)null);
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Staff", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Staff", (string)null);
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Testimonial", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Client");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ClientID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TestimonialDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ClientID");
+
+                    b.ToTable("Testimonials", (string)null);
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Booking", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Booking", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Client", "Client")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Service", "Service")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,33 +481,33 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Payment", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Payment", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Booking", "Booking")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Booking", "Booking")
                         .WithOne("Payment")
-                        .HasForeignKey("PrestigePathway.DataAccessLayer.NewFolder.Payment", "BookingID")
+                        .HasForeignKey("PrestigePathway.DataAccessLayer.Models.Payment", "BookingID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Booking");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Service", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Service", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Partner", null)
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Partner", null)
                         .WithMany("Services")
                         .HasForeignKey("PartnerID");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.ServiceLocation", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceLocation", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Location", "Location")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Location", "Location")
                         .WithMany("ServiceLocations")
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Service", "Service")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Service", "Service")
                         .WithMany("ServiceLocations")
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,9 +518,9 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.StaffAssistant", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.StaffAssistant", b =>
                 {
-                    b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Booking", "Booking")
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Booking", "Booking")
                         .WithMany("StaffAssistants")
                         .HasForeignKey("BookingID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -534,12 +537,27 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Staff", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Promotion", b =>
                 {
-                    b.Navigation("StaffAssistants");
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceID");
+
+                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Booking", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Testimonial", b =>
+                {
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Booking", b =>
                 {
                     b.Navigation("Payment")
                         .IsRequired();
@@ -547,19 +565,24 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("StaffAssistants");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Location", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Location", b =>
                 {
                     b.Navigation("ServiceLocations");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Partner", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Partner", b =>
                 {
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Service", b =>
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Service", b =>
                 {
                     b.Navigation("ServiceLocations");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.ModelsFolder.Staff", b =>
+                {
+                    b.Navigation("StaffAssistants");
                 });
 #pragma warning restore 612, 618
         }
