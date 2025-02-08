@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
-using PrestigePathway.DataAccessLayer.NewFolder;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.ModelsFolder
 {

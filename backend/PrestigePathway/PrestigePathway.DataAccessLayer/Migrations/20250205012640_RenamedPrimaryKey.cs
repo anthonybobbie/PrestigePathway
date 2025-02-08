@@ -27,7 +27,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
             migrationBuilder.RenameColumn(
                 name: "ServiceID",
-                table: "Services",
+                table: "ServiceAbstractions",
                 newName: "ID");
 
             migrationBuilder.RenameColumn(
@@ -86,7 +86,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
             migrationBuilder.RenameColumn(
                 name: "ID",
-                table: "Services",
+                table: "ServiceAbstractions",
                 newName: "ServiceID");
 
             migrationBuilder.RenameColumn(

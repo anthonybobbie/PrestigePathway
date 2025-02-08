@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 
-namespace PrestigePathway.DataAccessLayer.NewFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class Booking
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PrestigePathway.DataAccessLayer.NewFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class User
     {

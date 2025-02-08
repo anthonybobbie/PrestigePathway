@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using PrestigePathway.DataAccessLayer.NewFolder;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -11,77 +8,49 @@ namespace PrestigePathway.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IAuthService authService)
         {
-            _configuration = configuration;
+            _authService = authService;
         }
-
-        // Mock user store (replace with a database in production)
-        private List<User> Users = new List<User>
-        {
-            new User { ID = 1, Username = "admin", Password = "admin123" } // Use hashed passwords in production
-        };
 
         // POST: api/Auth/Login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User loginRequest)
+        public async Task<IActionResult> Login([FromBody] User loginRequest)
         {
-            var user = Users.SingleOrDefault(u => u.Username == loginRequest.Username && u.Password == loginRequest.Password);
-
-            if (user == null)
+            try
             {
-                return Unauthorized("Invalid username or password.");
+                var token = await _authService.LoginAsync(loginRequest.Username, loginRequest.Password);
+                return Ok(new { Token = token });
             }
-
-            var token = GenerateJwtToken(user);
-            return Ok(new { Token = token });
-        }
-
-        // Helper method to generate JWT token
-        private string GenerateJwtToken(User user)
-        {
-            var jwtSettings = _configuration.GetSection("Jwt");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            catch (ArgumentException ex)
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryInMinutes"])),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = jwtSettings["Issuer"],
-                Audience = jwtSettings["Audience"]
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
 
-        //[HttpPost("register")]
-        //public IActionResult Register([FromBody] User registerRequest)
-        //{
-        //    // Validate input
-        //    if (Users.Any(u => u.Username == registerRequest.Username))
-        //    {
-        //        return BadRequest("Username already exists.");
-        //    }
-
-        //    // Add user to the store (replace with database logic)
-        //    var newUser = new User
-        //    {
-        //        Id = Users.Count + 1,
-        //        Username = registerRequest.Username,
-        //        Password = registerRequest.Password // Hash the password in production
-        //    };
-        //    Users.Add(newUser);
-
-        //    return Ok(new { Message = "User registered successfully." });
-        //}
+        // POST: api/Auth/Register
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] User registerRequest)
+        {
+            try
+            {
+                await _authService.RegisterAsync(registerRequest);
+                return Ok(new { Message = "User registered successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (FluentValidation.ValidationException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
+        }
     }
 }

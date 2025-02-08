@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrestigePathway.DataAccessLayer.NewFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class ServiceLocation
     {

@@ -388,7 +388,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("PartnerID");
 
-                    b.ToTable("Services");
+                    b.ToTable("ServiceAbstractions");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.ServiceLocation", b =>
@@ -495,7 +495,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Service", b =>
                 {
                     b.HasOne("PrestigePathway.DataAccessLayer.NewFolder.Partner", null)
-                        .WithMany("Services")
+                        .WithMany("ServiceAbstractions")
                         .HasForeignKey("PartnerID");
                 });
 
@@ -562,7 +562,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Partner", b =>
                 {
-                    b.Navigation("Services");
+                    b.Navigation("ServiceAbstractions");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.NewFolder.Service", b =>

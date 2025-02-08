@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 
-namespace PrestigePathway.DataAccessLayer.NewFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class Client
     {

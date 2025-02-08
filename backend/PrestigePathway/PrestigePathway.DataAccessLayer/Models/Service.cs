@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Common.Enums;
+﻿using PrestigePathway.DataAccessLayer.Common.Enums;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PrestigePathway.DataAccessLayer.NewFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class Service
     {

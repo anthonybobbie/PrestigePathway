@@ -1,35 +1,36 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.ModelsFolder;
+using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StaffController : ControllerBase
     {
-        private readonly SocialServicesDbContext _context;
+        private readonly IStaffService _staffService;
 
-        public StaffController(SocialServicesDbContext context)
+        public StaffController(IStaffService staffService)
         {
-            _context = context;
+            _staffService = staffService;
         }
 
         // GET: api/Staff
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Staff>>> GetStaff()
         {
-            return await _context.Staff.ToListAsync();
+            var staff = await _staffService.GetAllStaffAsync();
+            return Ok(staff);
         }
 
         // GET: api/Staff/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Staff>> GetStaff(int id)
         {
-            var staff = await _context.Staff.FindAsync(id);
+            var staff = await _staffService.GetStaffByIdAsync(id);
 
             if (staff == null)
             {
@@ -43,9 +44,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Staff>> PostStaff(Staff staff)
         {
-            _context.Staff.Add(staff);
-            await _context.SaveChangesAsync();
-
+            await _staffService.AddStaffAsync(staff);
             return CreatedAtAction(nameof(GetStaff), new { id = staff.ID }, staff);
         }
 
@@ -58,24 +57,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(staff).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Staff.Any(e => e.ID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _staffService.UpdateStaffAsync(staff);
             return NoContent();
         }
 
@@ -83,15 +65,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStaff(int id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            _context.Staff.Remove(staff);
-            await _context.SaveChangesAsync();
-
+            await _staffService.DeleteStaffAsync(id);
             return NoContent();
         }
     }
