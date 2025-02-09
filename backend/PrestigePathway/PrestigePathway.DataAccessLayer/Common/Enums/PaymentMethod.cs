@@ -6,13 +6,15 @@ namespace PrestigePathway.DataAccessLayer.Common.Enums
     {
         [EnumMember(Value = "Cash")]
         Cash,
-        [EnumMember(Value = "Mobile Money")]
+        [EnumMember(Value = "MobileMoney")]
         MobileMoney,
-        [EnumMember(Value = "Credit Card")]
+        [EnumMember(Value = "CreditCard")]
         CreditCard,  
-        [EnumMember(Value = "Bank Transfer")]
+        [EnumMember(Value = "BankTransfer")]
         BankTransfer,
         [EnumMember(Value = "Paypal")]
-        Paypal
+        Paypal,
+        [EnumMember(Value = "DebitCard")]
+        DebitCard
     }
 }
