@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer

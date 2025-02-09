@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -11,26 +12,31 @@ namespace PrestigePathway.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ServiceLocationController : ControllerBase
     {
-        private readonly IServiceLocationService _serviceLocationService;
+        private readonly SocialServicesDbContext _context;
 
-        public ServiceLocationController(IServiceLocationService serviceLocationService)
+        public ServiceLocationController(SocialServicesDbContext context)
         {
-            _serviceLocationService = serviceLocationService;
+            _context = context;
         }
 
         // GET: api/ServiceLocation
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ServiceLocation>>> GetServiceLocations()
         {
-            var serviceLocations = await _serviceLocationService.GetAllServiceLocationsAsync();
-            return Ok(serviceLocations);
+            return await _context.ServiceLocations
+                .Include(sl => sl.Service) // Include related Service data
+                .Include(sl => sl.Location) // Include related Location data
+                .ToListAsync();
         }
 
         // GET: api/ServiceLocation/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceLocation>> GetServiceLocation(int id)
         {
-            var serviceLocation = await _serviceLocationService.GetServiceLocationByIdAsync(id);
+            var serviceLocation = await _context.ServiceLocations
+                .Include(sl => sl.Service) // Include related Service data
+                .Include(sl => sl.Location) // Include related Location data
+                .FirstOrDefaultAsync(sl => sl.ID == id);
 
             if (serviceLocation == null)
             {
@@ -44,7 +50,9 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceLocation>> PostServiceLocation(ServiceLocation serviceLocation)
         {
-            await _serviceLocationService.AddServiceLocationAsync(serviceLocation);
+            _context.ServiceLocations.Add(serviceLocation);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetServiceLocation), new { id = serviceLocation.ID }, serviceLocation);
         }
 
@@ -57,7 +65,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _serviceLocationService.UpdateServiceLocationAsync(serviceLocation);
+            _context.Entry(serviceLocation).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.ServiceLocations.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -65,7 +90,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServiceLocation(int id)
         {
-            await _serviceLocationService.DeleteServiceLocationAsync(id);
+            var serviceLocation = await _context.ServiceLocations.FindAsync(id);
+            if (serviceLocation == null)
+            {
+                return NotFound();
+            }
+
+            _context.ServiceLocations.Remove(serviceLocation);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

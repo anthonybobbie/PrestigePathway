@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -11,26 +13,25 @@ namespace PrestigePathway.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ClientController : ControllerBase
     {
-        private readonly IClientService _clientService;
+        private readonly SocialServicesDbContext _context;
 
-        public ClientController(IClientService clientService)
+        public ClientController(SocialServicesDbContext context)
         {
-            _clientService = clientService;
+            _context = context;
         }
 
         // GET: api/Client
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
-            var clients = await _clientService.GetAllClientsAsync();
-            return Ok(clients);
+            return await _context.Clients.ToListAsync();
         }
 
         // GET: api/Client/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Client>> GetClient(int id)
         {
-            var client = await _clientService.GetClientByIdAsync(id);
+            var client = await _context.Clients.FindAsync(id);
 
             if (client == null)
             {
@@ -44,7 +45,9 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Client>> PostClient(Client client)
         {
-            await _clientService.AddClientAsync(client);
+            _context.Clients.Add(client);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetClient), new { id = client.ID }, client);
         }
 
@@ -57,7 +60,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _clientService.UpdateClientAsync(client);
+            _context.Entry(client).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Clients.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -65,7 +85,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
-            await _clientService.DeleteClientAsync(id);
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

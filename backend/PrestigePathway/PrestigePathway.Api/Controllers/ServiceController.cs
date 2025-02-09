@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -11,26 +12,25 @@ namespace PrestigePathway.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ServiceController : ControllerBase
     {
-        private readonly IServiceService _serviceService;
+        private readonly SocialServicesDbContext _context;
 
-        public ServiceController(IServiceService serviceService)
+        public ServiceController(SocialServicesDbContext context)
         {
-            _serviceService = serviceService;
+            _context = context;
         }
 
         // GET: api/Service
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Service>>> GetServices()
         {
-            var services = await _serviceService.GetAllServicesAsync();
-            return Ok(services);
+            return await _context.Services.ToListAsync();
         }
 
         // GET: api/Service/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Service>> GetService(int id)
         {
-            var service = await _serviceService.GetServiceByIdAsync(id);
+            var service = await _context.Services.FindAsync(id);
 
             if (service == null)
             {
@@ -44,7 +44,9 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Service>> PostService(Service service)
         {
-            await _serviceService.AddServiceAsync(service);
+            _context.Services.Add(service);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetService), new { id = service.ID }, service);
         }
 
@@ -57,7 +59,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _serviceService.UpdateServiceAsync(service);
+            _context.Entry(service).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Services.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -65,7 +84,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService(int id)
         {
-            await _serviceService.DeleteServiceAsync(id);
+            var service = await _context.Services.FindAsync(id);
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            _context.Services.Remove(service);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

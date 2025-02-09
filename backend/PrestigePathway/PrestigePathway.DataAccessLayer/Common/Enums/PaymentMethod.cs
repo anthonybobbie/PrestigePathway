@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 
 namespace PrestigePathway.DataAccessLayer.Common.Enums
 {
     public enum PaymentMethod
     {
+        [EnumMember(Value = "Cash")]
         Cash,
+        [EnumMember(Value = "Mobile Money")]
         MobileMoney,
-        CreditCard,
-        BankTransfer
+        [EnumMember(Value = "Credit Card")]
+        CreditCard,  
+        [EnumMember(Value = "Bank Transfer")]
+        BankTransfer,
+        [EnumMember(Value = "Paypal")]
+        Paypal
     }
 }

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -14,26 +12,29 @@ namespace PrestigePathway.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PromotionController : ControllerBase
     {
-        private readonly IPromotionService _promotionService;
+        private readonly SocialServicesDbContext _context;
 
-        public PromotionController(IPromotionService promotionService)
+        public PromotionController(SocialServicesDbContext context)
         {
-            _promotionService = promotionService;
+            _context = context;
         }
 
         // GET: api/Promotion
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Promotion>>> GetPromotions()
         {
-            var promotions = await _promotionService.GetAllPromotionsAsync();
-            return Ok(promotions);
+            return await _context.Promotions
+                .Include(p => p.Service) // Include related Service data
+                .ToListAsync();
         }
 
         // GET: api/Promotion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Promotion>> GetPromotion(int id)
         {
-            var promotion = await _promotionService.GetPromotionByIdAsync(id);
+            var promotion = await _context.Promotions
+                .Include(p => p.Service) // Include related Service data
+                .FirstOrDefaultAsync(p => p.ID == id);
 
             if (promotion == null)
             {
@@ -47,7 +48,9 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Promotion>> PostPromotion(Promotion promotion)
         {
-            await _promotionService.AddPromotionAsync(promotion);
+            _context.Promotions.Add(promotion);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetPromotion), new { id = promotion.ID }, promotion);
         }
 
@@ -60,7 +63,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _promotionService.UpdatePromotionAsync(promotion);
+            _context.Entry(promotion).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Promotions.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -68,7 +88,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePromotion(int id)
         {
-            await _promotionService.DeletePromotionAsync(id);
+            var promotion = await _context.Promotions.FindAsync(id);
+            if (promotion == null)
+            {
+                return NotFound();
+            }
+
+            _context.Promotions.Remove(promotion);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

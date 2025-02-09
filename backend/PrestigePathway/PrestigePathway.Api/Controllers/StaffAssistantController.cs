@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
@@ -11,26 +12,31 @@ namespace PrestigePathway.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StaffAssistantController : ControllerBase
     {
-        private readonly IStaffAssistantService _staffAssistantService;
+        private readonly SocialServicesDbContext _context;
 
-        public StaffAssistantController(IStaffAssistantService staffAssistantService)
+        public StaffAssistantController(SocialServicesDbContext context)
         {
-            _staffAssistantService = staffAssistantService;
+            _context = context;
         }
 
         // GET: api/StaffAssistant
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffAssistant>>> GetStaffAssistants()
+        public async Task<ActionResult<IEnumerable<StaffAssistant>>> GetStaffAssistant()
         {
-            var staffAssistants = await _staffAssistantService.GetAllStaffAssistantsAsync();
-            return Ok(staffAssistants);
+            return await _context.StaffAssistant
+                .Include(sa => sa.Staff)
+                .Include(sa => sa.Booking)
+                .ToListAsync();
         }
 
         // GET: api/StaffAssistant/5
         [HttpGet("{id}")]
         public async Task<ActionResult<StaffAssistant>> GetStaffAssistant(int id)
         {
-            var staffAssistant = await _staffAssistantService.GetStaffAssistantByIdAsync(id);
+            var staffAssistant = await _context.StaffAssistant
+                .Include(sa => sa.Staff)
+                .Include(sa => sa.Booking)
+                .FirstOrDefaultAsync(sa => sa.ID == id);
 
             if (staffAssistant == null)
             {
@@ -44,7 +50,9 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<StaffAssistant>> PostStaffAssistant(StaffAssistant staffAssistant)
         {
-            await _staffAssistantService.AddStaffAssistantAsync(staffAssistant);
+            _context.StaffAssistant.Add(staffAssistant);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetStaffAssistant), new { id = staffAssistant.ID }, staffAssistant);
         }
 
@@ -57,7 +65,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _staffAssistantService.UpdateStaffAssistantAsync(staffAssistant);
+            _context.Entry(staffAssistant).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.StaffAssistant.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -65,7 +90,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStaffAssistant(int id)
         {
-            await _staffAssistantService.DeleteStaffAssistantAsync(id);
+            var staffAssistant = await _context.StaffAssistant.FindAsync(id);
+            if (staffAssistant == null)
+            {
+                return NotFound();
+            }
+
+            _context.StaffAssistant.Remove(staffAssistant);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

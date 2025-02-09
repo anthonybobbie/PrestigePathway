@@ -1,52 +1,56 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
-using PrestigePathway.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TestimonialController : ControllerBase
     {
-        private readonly ITestimonialService _testimonialService;
+        private readonly SocialServicesDbContext _context;
 
-        public TestimonialController(ITestimonialService testimonialService)
+        public TestimonialController(SocialServicesDbContext context)
         {
-            _testimonialService = testimonialService;
+            _context = context;
         }
 
         // GET: api/Testimonial
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Testimonial>>> GetTestimonials()
         {
-            var testimonials = await _testimonialService.GetAllTestimonialsAsync();
-            return Ok(testimonials);
+            return await _context.Testimonials
+                .Include(t => t.Client) // Include related Client data
+                .ToListAsync();
         }
 
         // GET: api/Testimonial/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Testimonial>> GetTestimonial(int id)
         {
-            var testimonial = await _testimonialService.GetTestimonialByIdAsync(id);
+            var testimonial = await _context.Testimonials
+                .Include(t => t.Client) // Include related Client data
+                .FirstOrDefaultAsync(t => t.ID == id);
 
             if (testimonial == null)
             {
                 return NotFound();
             }
 
-            return Ok(testimonial);
+            return testimonial;
         }
 
         // POST: api/Testimonial
         [HttpPost]
         public async Task<ActionResult<Testimonial>> PostTestimonial(Testimonial testimonial)
         {
-            await _testimonialService.AddTestimonialAsync(testimonial);
+            _context.Testimonials.Add(testimonial);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetTestimonial), new { id = testimonial.ID }, testimonial);
         }
 
@@ -59,7 +63,24 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _testimonialService.UpdateTestimonialAsync(testimonial);
+            _context.Entry(testimonial).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Testimonials.Any(e => e.ID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
@@ -67,7 +88,15 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTestimonial(int id)
         {
-            await _testimonialService.DeleteTestimonialAsync(id);
+            var testimonial = await _context.Testimonials.FindAsync(id);
+            if (testimonial == null)
+            {
+                return NotFound();
+            }
+
+            _context.Testimonials.Remove(testimonial);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }
