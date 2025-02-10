@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -27,7 +25,7 @@ namespace PrestigePathway.Api.Controllers
             var partners = await _partnerService.GetAllPartnersAsync();
             return Ok(partners);
         }
-
+        
         // GET: api/Partner/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Partner>> GetPartner(int id)
@@ -58,8 +56,8 @@ namespace PrestigePathway.Api.Controllers
             {
                 return BadRequest();
             }
-
             await _partnerService.UpdatePartnerAsync(partner);
+
             return NoContent();
         }
 

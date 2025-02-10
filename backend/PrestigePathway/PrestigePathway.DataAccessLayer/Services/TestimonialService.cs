@@ -1,5 +1,5 @@
 ﻿using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Services
 {

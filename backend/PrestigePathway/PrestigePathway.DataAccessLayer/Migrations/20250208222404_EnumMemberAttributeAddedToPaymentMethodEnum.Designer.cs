@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrestigePathway.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using PrestigePathway.DataAccessLayer;
 namespace PrestigePathway.DataAccessLayer.Migrations
 {
     [DbContext(typeof(SocialServicesDbContext))]
-    partial class SocialServicesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250208222404_EnumMemberAttributeAddedToPaymentMethodEnum")]
+    partial class EnumMemberAttributeAddedToPaymentMethodEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -448,17 +451,16 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("Username")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Username] IS NOT NULL");
 
                     b.ToTable("Users");
                 });

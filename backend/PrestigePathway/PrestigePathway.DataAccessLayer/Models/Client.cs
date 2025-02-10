@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using PrestigePathway.DataAccessLayer.Common.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Common.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {

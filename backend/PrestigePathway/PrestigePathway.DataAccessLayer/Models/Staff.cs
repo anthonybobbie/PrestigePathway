@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.DataAccessLayer.ModelsFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class Staff
     {

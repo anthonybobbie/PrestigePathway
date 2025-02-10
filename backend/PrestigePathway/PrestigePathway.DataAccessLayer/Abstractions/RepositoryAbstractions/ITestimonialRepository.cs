@@ -1,4 +1,4 @@
-﻿using PrestigePathway.DataAccessLayer.ModelsFolder;
+﻿using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
 {
