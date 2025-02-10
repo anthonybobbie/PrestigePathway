@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrestigePathway.DataAccessLayer.ModelsFolder
+namespace PrestigePathway.DataAccessLayer.Models
 {
     public class Testimonial
     {

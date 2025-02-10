@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -30,14 +30,13 @@ namespace PrestigePathway.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Client>> GetClient(int id)
         {
-            var client = await _clientService.GetClientByIdAsync(id);
-
+            var client = _clientService.GetClientByIdAsync(id);
             if (client == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return client;
+            return await _clientService.GetClientByIdAsync(id);
         }
 
         // POST: api/Client

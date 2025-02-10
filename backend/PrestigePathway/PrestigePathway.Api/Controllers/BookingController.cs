@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 

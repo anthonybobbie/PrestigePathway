@@ -20,7 +20,7 @@ namespace PrestigePathway.Api.Controllers
 
         // GET: api/StaffAssistant
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffAssistant>>> GetStaffAssistants()
+        public async Task<ActionResult<IEnumerable<StaffAssistant>>> GetStaffAssistant()
         {
             var staffAssistants = await _staffAssistantService.GetAllStaffAssistantsAsync();
             return Ok(staffAssistants);
@@ -31,10 +31,9 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<StaffAssistant>> GetStaffAssistant(int id)
         {
             var staffAssistant = await _staffAssistantService.GetStaffAssistantByIdAsync(id);
-
             if (staffAssistant == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             return staffAssistant;
