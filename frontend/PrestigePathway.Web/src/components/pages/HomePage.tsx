@@ -47,8 +47,8 @@ export function HomePage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
 
-                    {/* Table */}
-                    <TableContainer component={Paper}>
+                    {initialBookings&&
+                    (<TableContainer component={Paper}>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -63,7 +63,7 @@ export function HomePage() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {initialBookings.map((booking: IBooking, index) => (
+                                {initialBookings?.map((booking: IBooking, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{booking.id}</TableCell>
 
@@ -80,7 +80,9 @@ export function HomePage() {
                                 ))}
                             </TableBody>
                         </Table>
-                    </TableContainer>
+                    </TableContainer>)
+                    }
+                    
 
                     {/* Pagination */}
                     {/* <TablePagination
