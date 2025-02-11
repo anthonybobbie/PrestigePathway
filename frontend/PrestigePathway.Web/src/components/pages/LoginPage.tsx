@@ -12,31 +12,23 @@ export function LoginPage() {
   const navigate = useNavigate(); // Hook for navigation
   // use context
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    setError(''); // Clear previous error message
+const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
+  setError('');
 
-    try {
-      const response: any = await apiService.post('/auth/login', { userName, password });
-      // Assuming the response contains the token in a field named 'token'
-      const { token } = response;
+  try {
+    // Add withCredentials to handle cookies
+    const response = await apiService.login( userName, password );
 
-      // Store the token in an HTTP-only cookie
-      document.cookie = `authToken=${token}; HttpOnly; Secure; SameSite=Strict`;
-      // Set user authentication state
-      setIsAuthenticated(true);
-      // Clear form fields
-      setUserName('');
-      setPassword('');
-
-      // Redirect to the home page
-      navigate('/home');
-    } catch (err) {
-      // Handle authentication errors
-      setError('Invalid userName or password. Please try again.');
-      console.error('Login error:', err);
-    }
-  };
+    // The server should set the cookie, no need to handle it here
+    setIsAuthenticated(true);
+    navigate('/home');
+    
+  } catch (err) {
+    setError('Invalid credentials. Please try again.');
+    console.error('Login error:', err);
+  }
+};
 
 
   return (
