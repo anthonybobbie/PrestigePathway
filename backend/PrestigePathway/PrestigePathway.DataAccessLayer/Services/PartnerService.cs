@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
+﻿using PrestigePathway.BusinessLogicLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
-using PrestigePathway.BusinessLogicLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
     public class PartnerService : IPartnerService
     {
         private readonly IPartnerRepository _partnerRepository;
+
+        public PartnerService(IPartnerRepository partnerRepository)
+        {
+            _partnerRepository = partnerRepository;
+        }
 
         public async Task AddAsync(Partner partner)
         {
@@ -31,14 +33,15 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             return await _partnerRepository.GetByIdAsync(id);
         }
 
+        public async Task UpdateAsync(Partner entity)
+        {
+            await _partnerRepository.UpdateAsync(entity);
+        }
+            
         //public async Task<IEnumerable<Partner>> GetPartnersByLocationAsync(string location)
         //{
         //    return await _partnerRepository.GetPartnersByLocationAsync(string location);
         //}
 
-        public async Task UpdateAsync(Partner partner)
-        {
-            await _partnerRepository.UpdateAsync(partner);
-        }
     }
 }

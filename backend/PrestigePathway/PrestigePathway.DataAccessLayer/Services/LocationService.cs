@@ -16,54 +16,29 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _locationRepository = locationRepository;
         }
 
-        public Task AddAsync(LocationService entity)
+        public async Task<IEnumerable<Location>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _locationRepository.GetAllLocationsAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<Location> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _locationRepository.GetLocationByIdAsync(id);
         }
 
-        public Task<IEnumerable<LocationService>> GetAllAsync()
+        public async Task AddAsync(Location location)
         {
-            throw new NotImplementedException();
+            await _locationRepository.AddLocationAsync(location);
         }
 
-        public Task<LocationService> GetByIdAsync(int id)
+        public async Task UpdateAsync(Location location)
         {
-            throw new NotImplementedException();
+            await _locationRepository.UpdateLocationAsync(location);
         }
 
-        public Task UpdateAsync(LocationService entity)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            await _locationRepository.DeleteLocationAsync(id);
         }
-
-        //public async Task<IEnumerable<Location>> GetAllAsync()
-        //{
-        //    return await _locationRepository.GetAllLocationsAsync();
-        //}
-
-        //public async Task<Location> GetByIdAsync(int id)
-        //{
-        //    return await _locationRepository.GetLocationByIdAsync(id);
-        //}
-
-        //public async Task AddAsync(Location location)
-        //{
-        //    await _locationRepository.AddLocationAsync(location);
-        //}
-
-        //public async Task UpdateAsync(Location location)
-        //{
-        //    await _locationRepository.UpdateLocationAsync(location);
-        //}
-
-        //public async Task DeleteAsync(int id)
-        //{
-        //    await _locationRepository.DeleteLocationAsync(id);
-        //}
     }
 }

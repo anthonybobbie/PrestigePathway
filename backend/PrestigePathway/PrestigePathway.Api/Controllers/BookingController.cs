@@ -1,26 +1,27 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.Api.Controllers;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
-[Route("api/[controller]")]
-[ApiController]
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class BookingController : BaseController<Booking, IBookingService>
+namespace PrestigePathway.Api.Controllers
 {
-    public BookingController(IBookingService bookingService, ILogger<BookingController> logger)
-        : base(bookingService, logger)
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class BookingController : BaseController<Booking, IBookingService>
     {
-    }
+        public BookingController(IBookingService bookingService, ILogger<BookingController> logger)
+            : base(bookingService, logger)
+        {
+        }
 
-    protected override int GetEntityId(Booking entity) => entity.ID;
+        protected override int GetEntityId(Booking entity) => entity.ID;
 
-    [HttpGet("SearchBookingByClientId")]
-    public async Task<IEnumerable<Booking>> SearchByClientId(int clientId)
-    {
-        return await _service.GetBookingsByClientIdAsync(clientId);
+        [HttpGet("SearchBookingByClientId")]
+        public async Task<IEnumerable<Booking>> SearchByClientId(int clientId)
+        {
+            return await _service.GetBookingsByClientIdAsync(clientId);
+        }
     }
 }

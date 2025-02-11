@@ -1,4 +1,5 @@
 ﻿using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
@@ -39,7 +40,7 @@ namespace PrestigePathway.BusinessLogicLayer.Services
 
         public async Task<IEnumerable<Client>> SearchClientsByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            return await _clientRepository.SearchClientsByNameAsync(name);
         }
     }
 }

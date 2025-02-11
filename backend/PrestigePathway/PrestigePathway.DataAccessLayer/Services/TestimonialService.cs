@@ -12,27 +12,27 @@ namespace PrestigePathway.Services
             _testimonialRepository = testimonialRepository;
         }
 
-        public async Task<IEnumerable<Testimonial>> GetAllTestimonialsAsync()
+        public async Task<IEnumerable<Testimonial>> GetAllAsync()
         {
             return await _testimonialRepository.GetAllAsync();
         }
 
-        public async Task<Testimonial> GetTestimonialByIdAsync(int id)
+        public async Task<Testimonial> GetByIdAsync(int id)
         {
             return await _testimonialRepository.GetByIdAsync(id);
         }
 
-        public async Task AddTestimonialAsync(Testimonial testimonial)
+        public async Task AddAsync(Testimonial testimonial)
         {
             await _testimonialRepository.AddAsync(testimonial);
         }
 
-        public async Task UpdateTestimonialAsync(Testimonial testimonial)
+        public async Task UpdateAsync(Testimonial testimonial)
         {
             await _testimonialRepository.UpdateAsync(testimonial);
         }
 
-        public async Task DeleteTestimonialAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _testimonialRepository.DeleteAsync(id);
         }

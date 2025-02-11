@@ -5,7 +5,7 @@ using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
 {
-    public interface ILocationService : IService<LocationService>
+    public interface ILocationService : IService<Location>
     {
         
     }

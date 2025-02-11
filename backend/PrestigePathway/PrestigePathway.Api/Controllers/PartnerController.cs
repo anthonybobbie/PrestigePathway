@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.BusinessLogicLayer.Abstractions;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
@@ -10,64 +9,13 @@ namespace PrestigePathway.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PartnerController : ControllerBase
+    public class PartnerController : BaseController<Partner, IPartnerService>
     {
         private readonly IPartnerService _partnerService;
 
-        public PartnerController(IPartnerService partnerService)
+        public PartnerController(IPartnerService partnerService, ILogger<PartnerController> logger) 
+            : base(partnerService, logger) 
         {
-            _partnerService = partnerService;
-        }
-
-        // GET: api/Partner
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Partner>>> GetPartners()
-        {
-            var partners = await _partnerService.GetAllAsync();
-            return Ok(partners);
-        }
-        
-        // GET: api/Partner/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Partner>> GetPartner(int id)
-        {
-            var partner = await _partnerService.GetByIdAsync(id);
-
-            if (partner == null)
-            {
-                return NotFound();
-            }
-
-            return partner;
-        }
-
-        // POST: api/Partner
-        [HttpPost]
-        public async Task<ActionResult<Partner>> PostPartner(Partner partner)
-        {
-            await _partnerService.AddAsync(partner);
-            return CreatedAtAction(nameof(GetPartner), new { id = partner.ID }, partner);
-        }
-
-        // PUT: api/Partner/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPartner(int id, Partner partner)
-        {
-            if (id != partner.ID)
-            {
-                return BadRequest();
-            }
-            await _partnerService.UpdateAsync(partner);
-
-            return NoContent();
-        }
-
-        // DELETE: api/Partner/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePartner(int id)
-        {
-            await _partnerService.DeleteAsync(id);
-            return NoContent();
         }
     }
 }

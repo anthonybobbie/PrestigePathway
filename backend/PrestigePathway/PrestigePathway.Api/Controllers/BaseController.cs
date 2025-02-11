@@ -1,127 +1,130 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.DataAccessLayer.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class BaseController<TEntity, TService> : ControllerBase
-    where TEntity : class
-    where TService : IService<TEntity>
+namespace PrestigePathway.Api.Controllers
 {
-    protected readonly TService _service;
-    protected readonly ILogger<BaseController<TEntity, TService>> _logger;
-
-    public BaseController(TService service, ILogger<BaseController<TEntity, TService>> logger)
+    public class BaseController<TEntity, TService> : ControllerBase
+        where TEntity : class
+        where TService : IService<TEntity>
     {
-        _service = service;
-        _logger = logger;
-    }
+        protected readonly TService _service;
+        protected readonly ILogger<BaseController<TEntity, TService>> _logger;
 
-    // GET: api/[controller]
-    [HttpGet]
-    public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
-    {
-        try
+        public BaseController(TService service, ILogger<BaseController<TEntity, TService>> logger)
         {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
+            _service = service;
+            _logger = logger;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while fetching entities.");
-            return HandleError(ex, "An error occurred while fetching entities.");
-        }
-    }
 
-    // GET: api/[controller]/5
-    [HttpGet("{id}")]
-    public virtual async Task<ActionResult<TEntity>> GetById(int id)
-    {
-        try
+        // GET: api/[controller]
+        [HttpGet("GetAll[controller]s")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
         {
-            var entity = await _service.GetByIdAsync(id);
-
-            if (entity == null)
+            try
             {
-                return NotFound();
+                var entities = await _service.GetAllAsync();
+                return Ok(entities);
             }
-
-            return entity;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"An error occurred while fetching the entity with ID {id}.");
-            return HandleError(ex, $"An error occurred while fetching the entity with ID {id}.");
-        }
-    }
-
-    // POST: api/[controller]
-    [HttpPost]
-    public virtual async Task<ActionResult<TEntity>> Create(TEntity entity)
-    {
-        try
-        {
-            await _service.AddAsync(entity);
-            return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) }, entity);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while creating the entity.");
-            return HandleError(ex, "An error occurred while creating the entity.");
-        }
-    }
-
-    // PUT: api/[controller]/5
-    [HttpPut("{id}")]
-    public virtual async Task<IActionResult> Update(int id, TEntity entity)
-    {
-        try
-        {
-            if (id != GetEntityId(entity))
+            catch (Exception ex)
             {
-                return BadRequest();
+                _logger.LogError(ex, "An error occurred while fetching entities.");
+                return HandleError(ex, "An error occurred while fetching entities.");
             }
-
-            await _service.UpdateAsync(entity);
-            return NoContent();
         }
-        catch (Exception ex)
+
+        // GET: api/[controller]/5
+        [HttpGet("{id}/Get[controller]ById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public virtual async Task<ActionResult<TEntity>> GetById(int id)
         {
-            _logger.LogError(ex, $"An error occurred while updating the entity with ID {id}.");
-            return HandleError(ex, $"An error occurred while updating the entity with ID {id}.");
-        }
-    }
+            try
+            {
+                var entity = await _service.GetByIdAsync(id);
 
-    // DELETE: api/[controller]/5
-    [HttpDelete("{id}")]
-    public virtual async Task<IActionResult> Delete(int id)
-    {
-        try
+                if (entity == null)
+                {
+                    return NotFound();
+                }
+
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while fetching the entity with ID {id}.");
+                return HandleError(ex, $"An error occurred while fetching the entity with ID {id}.");
+            }
+        }
+
+        // POST: api/[controller]
+        [HttpPost("Create[controller]")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public virtual async Task<ActionResult<TEntity>> Create(TEntity entity)
         {
-            await _service.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                await _service.AddAsync(entity);
+                return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) }, entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating the entity.");
+                return HandleError(ex, "An error occurred while creating the entity.");
+            }
         }
-        catch (Exception ex)
+
+        // PUT: api/[controller]/5
+        [HttpPut("{id}/Update[controller]")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public virtual async Task<IActionResult> Update(int id, TEntity entity)
         {
-            _logger.LogError(ex, $"An error occurred while deleting the entity with ID {id}.");
-            return HandleError(ex, $"An error occurred while deleting the entity with ID {id}.");
+            try
+            {
+                if (id != GetEntityId(entity))
+                {
+                    return BadRequest();
+                }
+
+                await _service.UpdateAsync(entity);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while updating the entity with ID {id}.");
+                return HandleError(ex, $"An error occurred while updating the entity with ID {id}.");
+            }
         }
-    }
 
-    // Helper method to handle errors
-    protected ActionResult HandleError(Exception ex, string message)
-    {
-        return StatusCode(500, new { Message = message, Details = ex.Message });
-    }
+        // DELETE: api/[controller]/5
+        [HttpDelete("{id}/Delete[controller]")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public virtual async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _service.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while deleting the entity with ID {id}.");
+                return HandleError(ex, $"An error occurred while deleting the entity with ID {id}.");
+            }
+        }
 
-    // Helper method to get the ID of an entity
-    protected virtual int GetEntityId(TEntity entity)
-    {
-        // Implement logic to get the ID of the entity (e.g., using reflection or a base interface)
-        throw new NotImplementedException("GetEntityId must be implemented in derived controllers.");
+        // Helper method to handle errors
+        protected ActionResult HandleError(Exception ex, string message)
+        {
+            return StatusCode(500, new { Message = message, Details = ex.Message });
+        }
+
+        // Helper method to get the ID of an entity
+        protected virtual int GetEntityId(TEntity entity)
+        {
+            // Implement logic to get the ID of the entity (e.g., using reflection or a base interface)
+            throw new NotImplementedException("GetEntityId must be implemented in derived controllers.");
+        }
     }
 }

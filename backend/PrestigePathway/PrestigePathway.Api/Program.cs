@@ -16,6 +16,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 using PrestigePathway.BusinessLogicLayer.Abstractions;
+using Microsoft.OpenApi.Models;
 
 namespace PrestigePathway.Api
 {
@@ -101,10 +102,7 @@ namespace PrestigePathway.Api
                 });
             });
 
-            builder.Services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            });
+            builder.Services.AddControllers();
 
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
