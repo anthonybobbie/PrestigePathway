@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -31,10 +31,9 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<Service>> GetService(int id)
         {
             var service = await _serviceService.GetServiceByIdAsync(id);
-
             if (service == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             return service;
@@ -57,7 +56,7 @@ namespace PrestigePathway.Api.Controllers
                 return BadRequest();
             }
 
-            await _serviceService.UpdateServiceAsync(service);
+           await _serviceService.UpdateServiceAsync(service);
             return NoContent();
         }
 

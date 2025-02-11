@@ -6,7 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
+using PrestigePathway.DataAccessLayer.Models;
+using System.Text.Json.Serialization;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
@@ -28,6 +29,7 @@ namespace PrestigePathway.DataAccessLayer.Models
         public string? Notes { get; set; }
 
         public Staff Staff { get; set; }
+        [JsonIgnore]
         public Booking Booking { get; set; }
     }
 }

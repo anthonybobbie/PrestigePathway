@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
 using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -22,8 +22,8 @@ namespace PrestigePathway.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Staff>>> GetStaff()
         {
-            var staff = await _staffService.GetAllStaffAsync();
-            return Ok(staff);
+            var staffs = await _staffService.GetAllStaffAsync();
+            return Ok(staffs);
         }
 
         // GET: api/Staff/5
@@ -31,13 +31,12 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<Staff>> GetStaff(int id)
         {
             var staff = await _staffService.GetStaffByIdAsync(id);
-
             if (staff == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return staff;
+            return Ok(staff);
         }
 
         // POST: api/Staff

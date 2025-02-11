@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
+using System.Text.Json.Serialization;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
@@ -31,6 +32,7 @@ namespace PrestigePathway.DataAccessLayer.Models
 
         public string Status { get; set; } = "Pending";
 
+        [JsonIgnore]
         public Booking Booking { get; set; }
     }
 }

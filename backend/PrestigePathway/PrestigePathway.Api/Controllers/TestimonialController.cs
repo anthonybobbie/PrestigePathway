@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
-using PrestigePathway.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TestimonialController : ControllerBase
     {
         private readonly ITestimonialService _testimonialService;
@@ -25,7 +23,7 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<IEnumerable<Testimonial>>> GetTestimonials()
         {
             var testimonials = await _testimonialService.GetAllTestimonialsAsync();
-            return Ok(testimonials);
+            return Ok(testimonials);    
         }
 
         // GET: api/Testimonial/5
@@ -33,13 +31,12 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<Testimonial>> GetTestimonial(int id)
         {
             var testimonial = await _testimonialService.GetTestimonialByIdAsync(id);
-
             if (testimonial == null)
             {
                 return NotFound();
             }
 
-            return Ok(testimonial);
+            return testimonial;
         }
 
         // POST: api/Testimonial

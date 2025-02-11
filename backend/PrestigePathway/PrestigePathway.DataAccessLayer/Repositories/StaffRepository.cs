@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
+using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
 
 namespace PrestigePathway.DataAccessLayer.Repositories

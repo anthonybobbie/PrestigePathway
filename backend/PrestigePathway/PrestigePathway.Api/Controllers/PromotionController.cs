@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.ModelsFolder;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
@@ -34,13 +31,12 @@ namespace PrestigePathway.Api.Controllers
         public async Task<ActionResult<Promotion>> GetPromotion(int id)
         {
             var promotion = await _promotionService.GetPromotionByIdAsync(id);
-
             if (promotion == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return promotion;
+            return Ok(promotion);
         }
 
         // POST: api/Promotion
