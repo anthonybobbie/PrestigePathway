@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.Repositories
 {

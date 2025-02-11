@@ -1,13 +1,8 @@
-﻿using PrestigePathway.DataAccessLayer.Models;
+﻿using PrestigePathway.DataAccessLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
+public interface IClientService : IService<Client>
 {
-    public interface IClientService
-    {
-        Task<IEnumerable<Client>> GetAllClientsAsync();
-        Task<Client> GetClientByIdAsync(int id);
-        Task AddClientAsync(Client client);
-        Task UpdateClientAsync(Client client);
-        Task DeleteClientAsync(int id);
-    }
+    // Client-specific method
+    Task<IEnumerable<Client>> SearchClientsByNameAsync(string name);
 }

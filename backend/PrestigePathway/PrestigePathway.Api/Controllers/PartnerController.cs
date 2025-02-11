@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrestigePathway.BusinessLogicLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
@@ -22,7 +23,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Partner>>> GetPartners()
         {
-            var partners = await _partnerService.GetAllPartnersAsync();
+            var partners = await _partnerService.GetAllAsync();
             return Ok(partners);
         }
         
@@ -30,7 +31,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Partner>> GetPartner(int id)
         {
-            var partner = await _partnerService.GetPartnerByIdAsync(id);
+            var partner = await _partnerService.GetByIdAsync(id);
 
             if (partner == null)
             {
@@ -44,7 +45,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Partner>> PostPartner(Partner partner)
         {
-            await _partnerService.AddPartnerAsync(partner);
+            await _partnerService.AddAsync(partner);
             return CreatedAtAction(nameof(GetPartner), new { id = partner.ID }, partner);
         }
 
@@ -56,7 +57,7 @@ namespace PrestigePathway.Api.Controllers
             {
                 return BadRequest();
             }
-            await _partnerService.UpdatePartnerAsync(partner);
+            await _partnerService.UpdateAsync(partner);
 
             return NoContent();
         }
@@ -65,7 +66,7 @@ namespace PrestigePathway.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePartner(int id)
         {
-            await _partnerService.DeletePartnerAsync(id);
+            await _partnerService.DeleteAsync(id);
             return NoContent();
         }
     }

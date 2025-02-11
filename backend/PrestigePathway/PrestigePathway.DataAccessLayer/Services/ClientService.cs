@@ -1,6 +1,5 @@
-﻿using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -13,29 +12,34 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _clientRepository = clientRepository;
         }
 
-        public async Task<IEnumerable<Client>> GetAllClientsAsync()
-        {
-            return await _clientRepository.GetAllClientsAsync();
-        }
-
-        public async Task<Client> GetClientByIdAsync(int id)
-        {
-            return await _clientRepository.GetClientByIdAsync(id);
-        }
-
-        public async Task AddClientAsync(Client client)
+        public async Task AddAsync(Client client)
         {
             await _clientRepository.AddClientAsync(client);
         }
 
-        public async Task UpdateClientAsync(Client client)
+        public async Task DeleteAsync(int id)
+        {
+            await _clientRepository.DeleteClientAsync(id);
+        }
+
+        public async Task<IEnumerable<Client>> GetAllAsync()
+        {
+            return await _clientRepository.GetAllClientsAsync();
+        }
+
+        public Task<Client> GetByIdAsync(int id)
+        {
+            return _clientRepository.GetClientByIdAsync(id);
+        }
+
+        public async Task UpdateAsync(Client client)
         {
             await _clientRepository.UpdateClientAsync(client);
         }
 
-        public async Task DeleteClientAsync(int id)
+        public async Task<IEnumerable<Client>> SearchClientsByNameAsync(string name)
         {
-            await _clientRepository.DeleteClientAsync(id);
+            throw new NotImplementedException();
         }
     }
 }

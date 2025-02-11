@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.BusinessLogicLayer.Abstractions;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -10,34 +11,34 @@ namespace PrestigePathway.BusinessLogicLayer.Services
     {
         private readonly IPartnerRepository _partnerRepository;
 
-        public PartnerService(IPartnerRepository partnerRepository)
+        public async Task AddAsync(Partner partner)
         {
-            _partnerRepository = partnerRepository;
+            await _partnerRepository.AddAsync(partner);
         }
 
-        public async Task<IEnumerable<Partner>> GetAllPartnersAsync()
+        public async Task DeleteAsync(int id)
         {
-            return await _partnerRepository.GetAllPartnersAsync();
+            await _partnerRepository.DeleteAsync(id);
         }
 
-        public async Task<Partner> GetPartnerByIdAsync(int id)
+        public async Task<IEnumerable<Partner>> GetAllAsync()
         {
-            return await _partnerRepository.GetPartnerByIdAsync(id);
+            return await _partnerRepository.GetAllAsync();
         }
 
-        public async Task AddPartnerAsync(Partner partner)
+        public async Task<Partner> GetByIdAsync(int id)
         {
-            await _partnerRepository.AddPartnerAsync(partner);
+            return await _partnerRepository.GetByIdAsync(id);
         }
 
-        public async Task UpdatePartnerAsync(Partner partner)
-        {
-            await _partnerRepository.UpdatePartnerAsync(partner);
-        }
+        //public async Task<IEnumerable<Partner>> GetPartnersByLocationAsync(string location)
+        //{
+        //    return await _partnerRepository.GetPartnersByLocationAsync(string location);
+        //}
 
-        public async Task DeletePartnerAsync(int id)
+        public async Task UpdateAsync(Partner partner)
         {
-            await _partnerRepository.DeletePartnerAsync(id);
+            await _partnerRepository.UpdateAsync(partner);
         }
     }
 }

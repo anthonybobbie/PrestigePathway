@@ -12,6 +12,8 @@ using PrestigePathway.Services;
 using PrestigePathway.DataAccessLayer.Services;
 using FluentValidation;
 using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.BusinessLogicLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 
 namespace PrestigePathway.Api
 {
@@ -67,29 +69,29 @@ namespace PrestigePathway.Api
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
-            // RepositoryAbstractions
+            // Repositories
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
-            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();            
             builder.Services.AddScoped<IServiceLocationRepository, ServiceLocationRepository>();
             builder.Services.AddScoped<IStaffAssistantRepository, StaffAssistantRepository>();
             builder.Services.AddScoped<IStaffRepository, StaffRepository>();
             builder.Services.AddScoped<ITestimonialRepository, TestimonialRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            // ServiceAbstractions
+            // Service
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IClientService, ClientService>();
-            builder.Services.AddScoped<ILocationService, LocationService>();
+            //builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IPromotionService, PromotionService>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
-            builder.Services.AddScoped<IServiceLocationService,  ServiceLocationService>();
+            builder.Services.AddScoped<IServiceLocationService, ServiceLocationService>();
             builder.Services.AddScoped<IStaffAssistantService, StaffAssistantService>();
             builder.Services.AddScoped<IStaffService, StaffService>();
             builder.Services.AddScoped<ITestimonialService, TestimonialService>();

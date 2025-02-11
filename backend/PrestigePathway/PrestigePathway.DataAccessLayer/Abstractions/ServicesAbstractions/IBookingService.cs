@@ -1,13 +1,10 @@
 ﻿using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
+namespace PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions
 {
-    public interface IBookingService
+    public interface IBookingService : IService<Booking>
     {
-        Task<IEnumerable<Booking>> GetAllBookingsAsync();
-        Task<Booking> GetBookingByIdAsync(int id);
-        Task AddBookingAsync(Booking booking);
-        Task UpdateBookingAsync(Booking booking);
-        Task DeleteBookingAsync(int id);
+        //Booking specific-methods
+        Task<IEnumerable<Booking>> GetBookingsByClientIdAsync(int clientId);
     }
 }
