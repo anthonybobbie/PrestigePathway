@@ -12,8 +12,10 @@ using PrestigePathway.Services;
 using PrestigePathway.DataAccessLayer.Services;
 using FluentValidation;
 using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.BusinessLogicLayer.Abstractions;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
+using PrestigePathway.BusinessLogicLayer.Abstractions;
 
 namespace PrestigePathway.Api
 {
@@ -25,26 +27,64 @@ namespace PrestigePathway.Api
 
             // jwt
             var jwtSettings = builder.Configuration.GetSection("Jwt");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
             // Add authentication
-            builder.Services.AddAuthentication(options =>
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+           .AddJwtBearer(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                if (builder.Environment.IsDevelopment())
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
-                };
+                    // In development, bypass the usual token validation logic
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            return Task.CompletedTask; // To observe if there are still issues
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            // Optional: Add a fake claim or identity if needed
+                            var claimsIdentity = new ClaimsIdentity(new Claim[]
+                            {
+                                new Claim(ClaimTypes.NameIdentifier, "user_id"),
+                                new Claim(ClaimTypes.Name, "Developer")
+                            });
+                            context.Principal.AddIdentity(claimsIdentity);
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            // Prevent the default behavior of returning a 401
+                            context.HandleResponse();
+                            return Task.CompletedTask;
+                        }
+                    };
+                }
+                else
+                {
+                    // In production, enforce strict validation
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                    };
+                }
             });
 
             builder.Services.AddAuthorization();
@@ -86,7 +126,7 @@ namespace PrestigePathway.Api
             // Service
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IClientService, ClientService>();
-            //builder.Services.AddScoped<ILocationService, LocationService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IPromotionService, PromotionService>();

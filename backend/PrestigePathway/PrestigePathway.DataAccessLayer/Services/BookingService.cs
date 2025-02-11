@@ -8,6 +8,11 @@ namespace PrestigePathway.BusinessLogicLayer.Services
     {
         private readonly IBookingRepository _repository;
 
+        public BookingService(IBookingRepository repository)
+        {
+            _repository = repository;
+        }
+
         public async Task AddAsync(Booking booking)
         {
             await _repository.AddAsync(booking);
