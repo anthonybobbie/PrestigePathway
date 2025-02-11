@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,30 +13,26 @@ namespace PrestigePathway.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IAuthService authService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;
+            this.authService = authService;
         }
-
-        // Mock user store (replace with a database in production)
-        private List<User> Users = new List<User>
-        {
-            new User { ID = 1, Username = "admin", Password = "admin123" } // Use hashed passwords in production
-        };
 
         // POST: api/Auth/Login
         [HttpPost("login")]
         public IActionResult Login([FromBody] User loginRequest)
         {
-            var user = Users.SingleOrDefault(u => u.Username == loginRequest.Username && u.Password == loginRequest.Password);
+            var token = authService.LoginAsync(loginRequest.Username,loginRequest.Password);
 
-            if (user == null)
+            if (token == null)
             {
                 return Unauthorized("Invalid username or password.");
             }
 
-            var token = GenerateJwtToken(user);
+             
             return Ok(new { Token = token });
         }
 
