@@ -1,118 +1,126 @@
-import axios, { AxiosRequestConfig, AxiosInstance, AxiosError, CancelTokenSource } from 'axios';
-import config from '../../config'; // Import the config file
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosError } from 'axios';
+import config from '../../config';
 
-// Create a custom Axios instance with default configurations
+// Initialize axios instance
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: config.API_BASE_URL,
-  timeout: 5000, // Set a default timeout of 5 seconds
+  timeout: 10000, // Increased timeout for better UX
   headers: {
     'Content-Type': 'application/json',
-    // Add other default headers here if needed
-  },
-  withCredentials: true, // Ensure cookies are sent with each request
+  }
 });
 
-// Request interceptor to add authorization headers or other configurations
+// Enhanced request interceptor
 axiosInstance.interceptors.request.use(
-  (requestConfig) => {
-    // Additional configurations or headers can be added here if necessary
-    return requestConfig;
+  (config:any) => {
+    const token = getAuthToken();
+    const mergedHeaders = {
+      ...config.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    return {
+      ...config,
+      headers: mergedHeaders
+    };
   },
-  (error) => {
-    // Handle request errors
-    console.error('Request Error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle responses and errors globally
+// Add response interceptor for error handling
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    handleApiError(error);
+    if (error.response?.status === 401) {
+      // Auto-logout on 401 Unauthorized
+      clearAuth();
+    }
     return Promise.reject(error);
   }
 );
 
-/**
- * Handles API errors for debugging and user notifications.
- */
-const handleApiError = (error: AxiosError) => {
-  if (axios.isAxiosError(error)) {
-    console.error('API Error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-      headers: error.response?.headers,
-    });
-    // Optionally, implement user-friendly notifications here
-  } else {
-    console.error('Unexpected Error:', error);
+// Auth token management
+const getAuthToken = (): string | null => {
+  try {
+    return localStorage.getItem('authToken');
+  } catch (error) {
+    console.error('Error accessing localStorage:', error);
+    return null;
   }
 };
 
+const storeAuthToken = (token: string): void => {
+  localStorage.setItem('authToken', token);
+};
+
+const clearAuth = (): void => {
+  localStorage.removeItem('authToken');
+  delete axiosInstance.defaults.headers.common['Authorization'];
+};
+
 const apiService = {
-  /**
-   * Generic GET request
-   */
-  get: async <T>(endpoint: string, configOptions?: AxiosRequestConfig, cancelToken?: CancelTokenSource): Promise<T> => {
+  // Auth methods
+  login: async (username: string, password: string): Promise<void> => {
     try {
-      const response = await axiosInstance.get<T>(endpoint, { ...configOptions, cancelToken: cancelToken?.token });
-      return response.data;
+      const response = await axiosInstance.post<{ token: string }>(
+        '/auth/login',
+        { username, password }
+      );
+
+      if (response.data.token) {
+        storeAuthToken(response.data.token);
+      }
     } catch (error) {
-      // Error handling is managed by the interceptor
+      clearAuth();
       throw error;
     }
   },
 
-  /**
-   * Generic POST request
-   */
+  logout: async (): Promise<void> => {
+    try {
+      await axiosInstance.post('/auth/logout');
+    } finally {
+      clearAuth();
+    }
+  },
+
+  isAuthenticated: (): boolean => {
+    return !!getAuthToken();
+  },
+
+  // Data methods
+  get: async <T>(endpoint: string, configOptions?: AxiosRequestConfig): Promise<T> => {
+    const response = await axiosInstance.get<T>(endpoint, configOptions);
+    return response.data;
+  },
+
   post: async <TRequest, TResponse>(
     endpoint: string,
     data: TRequest,
-    configOptions?: AxiosRequestConfig,
-    cancelToken?: CancelTokenSource
+    configOptions?: AxiosRequestConfig
   ): Promise<TResponse> => {
-    try {
-      const response = await axiosInstance.post<TResponse>(endpoint, data, { ...configOptions, cancelToken: cancelToken?.token });
-      return response.data;
-    } catch (error) {
-      // Error handling is managed by the interceptor
-      throw error;
-    }
+    const response = await axiosInstance.post<TResponse>(endpoint, data, configOptions);
+    return response.data;
   },
 
-  /**
-   * Generic PUT request
-   */
+
   put: async <TRequest, TResponse>(
     endpoint: string,
     data: TRequest,
-    configOptions?: AxiosRequestConfig,
-    cancelToken?: CancelTokenSource
+    configOptions?: AxiosRequestConfig
   ): Promise<TResponse> => {
-    try {
-      const response = await axiosInstance.put<TResponse>(endpoint, data, { ...configOptions, cancelToken: cancelToken?.token });
-      return response.data;
-    } catch (error) {
-      // Error handling is managed by the interceptor
-      throw error;
-    }
+    const response = await axiosInstance.put<TResponse>(endpoint, data, configOptions);
+    return response.data;
   },
 
-  /**
-   * Generic DELETE request
-   */
-  delete: async (endpoint: string, configOptions?: AxiosRequestConfig, cancelToken?: CancelTokenSource): Promise<boolean> => {
-    try {
-      await axiosInstance.delete(endpoint, { ...configOptions, cancelToken: cancelToken?.token });
-      return true;
-    } catch (error) {
-      // Error handling is managed by the interceptor
-      return false;
-    }
+  delete: async <T>(endpoint: string, configOptions?: AxiosRequestConfig): Promise<T> => {
+    const response = await axiosInstance.delete<T>(endpoint, configOptions);
+    return response.data;
   },
+
+
+
 };
+
 
 export default apiService;
