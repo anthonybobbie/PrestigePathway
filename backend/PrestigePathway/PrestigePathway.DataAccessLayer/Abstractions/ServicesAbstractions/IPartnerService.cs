@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using PrestigePathway.BusinessLogicLayer.Services;
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
+namespace PrestigePathway.BusinessLogicLayer.Abstractions
 {
-    public interface IPartnerService
+    public interface IPartnerService : IService<Partner>
     {
-        Task<IEnumerable<Partner>> GetAllPartnersAsync();
-        Task<Partner> GetPartnerByIdAsync(int id);
-        Task AddPartnerAsync(Partner partner);
-        Task UpdatePartnerAsync(Partner partner);
-        Task DeletePartnerAsync(int id);
+        //Partner specific-methods
+        Task<IEnumerable<Partner>> GetAllAsync();
+        Task<Partner> GetByIdAsync(int id);
+        Task AddAsync(Partner entity);
+        Task UpdateAsync(Partner entity);
+        Task DeleteAsync(int id);
+        //Task<IEnumerable<Partner>> GetPartnersByLocationAsync(string location);
     }
 }

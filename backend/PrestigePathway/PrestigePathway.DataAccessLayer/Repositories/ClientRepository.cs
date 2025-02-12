@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.Repositories
 {
@@ -46,6 +43,13 @@ namespace PrestigePathway.DataAccessLayer.Repositories
                 _context.Clients.Remove(client);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Client>> SearchClientsByNameAsync(string name)
+        {
+            return await _context.Clients
+                .Where(c => c.FirstName.Contains(name) || c.LastName.Contains(name))
+                .ToListAsync();
         }
     }
 }

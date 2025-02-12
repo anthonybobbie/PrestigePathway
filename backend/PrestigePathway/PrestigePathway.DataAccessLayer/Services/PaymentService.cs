@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+﻿using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -15,27 +13,27 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _paymentRepository = paymentRepository;
         }
 
-        public async Task<IEnumerable<Payment>> GetAllPaymentsAsync()
+        public async Task<IEnumerable<Payment>> GetAllAsync()
         {
             return await _paymentRepository.GetAllPaymentsAsync();
         }
 
-        public async Task<Payment> GetPaymentByIdAsync(int id)
+        public async Task<Payment> GetByIdAsync(int id)
         {
             return await _paymentRepository.GetPaymentByIdAsync(id);
         }
 
-        public async Task AddPaymentAsync(Payment payment)
+        public async Task AddAsync(Payment payment)
         {
             await _paymentRepository.AddPaymentAsync(payment);
         }
 
-        public async Task UpdatePaymentAsync(Payment payment)
+        public async Task UpdateAsync(Payment payment)
         {
             await _paymentRepository.UpdatePaymentAsync(payment);
         }
 
-        public async Task DeletePaymentAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _paymentRepository.DeletePaymentAsync(id);
         }

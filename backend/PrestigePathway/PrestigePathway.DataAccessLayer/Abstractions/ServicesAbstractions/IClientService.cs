@@ -1,13 +1,10 @@
 ﻿using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
+namespace PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions
 {
-    public interface IClientService
+    public interface IClientService : IService<Client>
     {
-        Task<IEnumerable<Client>> GetAllClientsAsync();
-        Task<Client> GetClientByIdAsync(int id);
-        Task AddClientAsync(Client client);
-        Task UpdateClientAsync(Client client);
-        Task DeleteClientAsync(int id);
+        // Client-specific method
+        Task<IEnumerable<Client>> SearchClientsByNameAsync(string name);
     }
 }

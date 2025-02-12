@@ -6,8 +6,9 @@ namespace PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions
     {
         Task<IEnumerable<Client>> GetAllClientsAsync();
         Task<Client> GetClientByIdAsync(int id);
-        Task AddClientAsync(Client client);
-        Task UpdateClientAsync(Client client);
+        Task AddClientAsync(Client promotion);
+        Task UpdateClientAsync(Client promotion);
         Task DeleteClientAsync(int id);
+        Task<IEnumerable<Client>> SearchClientsByNameAsync(string name);
     }
 }

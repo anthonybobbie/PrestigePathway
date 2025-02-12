@@ -1,41 +1,46 @@
-﻿using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingRepository _repository;
 
-        public BookingService(IBookingRepository bookingRepository)
+        public BookingService(IBookingRepository repository)
         {
-            _bookingRepository = bookingRepository;
+            _repository = repository;
         }
 
-        public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
+        public async Task AddAsync(Booking booking)
         {
-            return await _bookingRepository.GetAllBookingsAsync();
+            await _repository.AddAsync(booking);
         }
 
-        public async Task<Booking> GetBookingByIdAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            return await _bookingRepository.GetBookingByIdAsync(id);
+            await _repository.DeleteAsync(id);
         }
 
-        public async Task AddBookingAsync(Booking booking)
+        public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-            await _bookingRepository.AddBookingAsync(booking);
+            return await _repository.GetAllAsync();
         }
 
-        public async Task UpdateBookingAsync(Booking booking)
+        public async Task<IEnumerable<Booking>> GetBookingsByClientIdAsync(int clientId)
         {
-            await _bookingRepository.UpdateBookingAsync(booking);
+            return await _repository.GetBookingsByClientIdAsync(clientId);
         }
 
-        public async Task DeleteBookingAsync(int id)
+        public async Task<Booking> GetByIdAsync(int id)
         {
-            await _bookingRepository.DeleteBookingAsync(id);
+            return await _repository.GetByIdAsync(id);
+        }
+
+        public async Task UpdateAsync(Booking booking)
+        {
+            await _repository.UpdateAsync(booking);
         }
     }
 }

@@ -15,27 +15,27 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _serviceRepository = serviceRepository;
         }
 
-        public async Task<IEnumerable<Service>> GetAllServicesAsync()
+        public async Task<IEnumerable<Service>> GetAllAsync()
         {
             return await _serviceRepository.GetAllServicesAsync();
         }
 
-        public async Task<Service> GetServiceByIdAsync(int id)
+        public async Task<Service> GetByIdAsync(int id)
         {
             return await _serviceRepository.GetServiceByIdAsync(id);
         }
 
-        public async Task AddServiceAsync(Service service)
+        public async Task AddAsync(Service service)
         {
             await _serviceRepository.AddServiceAsync(service);
         }
 
-        public async Task UpdateServiceAsync(Service service)
+        public async Task UpdateAsync(Service service)
         {
             await _serviceRepository.UpdateServiceAsync(service);
         }
 
-        public async Task DeleteServiceAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _serviceRepository.DeleteServiceAsync(id);
         }

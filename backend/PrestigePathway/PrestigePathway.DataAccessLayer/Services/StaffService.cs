@@ -13,27 +13,27 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _staffRepository = staffRepository;
         }
 
-        public async Task<IEnumerable<Staff>> GetAllStaffAsync()
+        public async Task<IEnumerable<Staff>> GetAllAsync()
         {
             return await _staffRepository.GetAllStaffAsync();
         }
 
-        public async Task<Staff> GetStaffByIdAsync(int id)
+        public async Task<Staff> GetByIdAsync(int id)
         {
             return await _staffRepository.GetStaffByIdAsync(id);
         }
 
-        public async Task AddStaffAsync(Staff staff)
+        public async Task AddAsync(Staff staff)
         {
             await _staffRepository.AddStaffAsync(staff);
         }
 
-        public async Task UpdateStaffAsync(Staff staff)
+        public async Task UpdateAsync(Staff staff)
         {
             await _staffRepository.UpdateStaffAsync(staff);
         }
 
-        public async Task DeleteStaffAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _staffRepository.DeleteStaffAsync(id);
         }

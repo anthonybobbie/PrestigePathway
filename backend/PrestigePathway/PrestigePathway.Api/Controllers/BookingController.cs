@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
@@ -9,64 +9,19 @@ namespace PrestigePathway.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class BookingController : ControllerBase
+    public class BookingController : BaseController<Booking, IBookingService>
     {
-        private readonly IBookingService _bookingService;
-
-        public BookingController(IBookingService bookingService)
+        public BookingController(IBookingService bookingService, ILogger<BookingController> logger)
+            : base(bookingService, logger)
         {
-            _bookingService = bookingService;
         }
 
-        // GET: api/Booking
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        protected override int GetEntityId(Booking entity) => entity.ID;
+
+        [HttpGet("SearchBookingByClientId")]
+        public async Task<IEnumerable<Booking>> SearchByClientId(int clientId)
         {
-            var bookings = await _bookingService.GetAllBookingsAsync();
-            return Ok(bookings);
-        }
-
-        // GET: api/Booking/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(int id)
-        {
-            var booking = await _bookingService.GetBookingByIdAsync(id);
-
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            return booking;
-        }
-
-        // POST: api/Booking
-        [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
-        {
-            await _bookingService.AddBookingAsync(booking);
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.ID }, booking);
-        }
-
-        // PUT: api/Booking/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
-        {
-            if (id != booking.ID)
-            {
-                return BadRequest();
-            }
-
-            await _bookingService.UpdateBookingAsync(booking);
-            return NoContent();
-        }
-
-        // DELETE: api/Booking/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooking(int id)
-        {
-            await _bookingService.DeleteBookingAsync(id);
-            return NoContent();
+            return await _service.GetBookingsByClientIdAsync(clientId);
         }
     }
 }

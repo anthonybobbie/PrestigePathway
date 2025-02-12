@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using PrestigePathway.BusinessLogicLayer.Services;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
 {
-    public interface IPaymentService
+    public interface IPaymentService : IService<Payment>
     {
-        Task<IEnumerable<Payment>> GetAllPaymentsAsync();
-        Task<Payment> GetPaymentByIdAsync(int id);
-        Task AddPaymentAsync(Payment payment);
-        Task UpdatePaymentAsync(Payment payment);
-        Task DeletePaymentAsync(int id);
+        //Task<IEnumerable<Payment>> GetAllAsync();
+        //Task<Payment> GetByIdAsync(int id);
+        //Task AddAsync(Payment payment);
+        //Task UpdateAsync(Payment payment);
+        //Task DeleteAsync(int id);
     }
 }

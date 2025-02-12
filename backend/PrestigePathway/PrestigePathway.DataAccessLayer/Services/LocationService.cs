@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -15,27 +16,27 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _locationRepository = locationRepository;
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        public async Task<IEnumerable<Location>> GetAllAsync()
         {
             return await _locationRepository.GetAllLocationsAsync();
         }
 
-        public async Task<Location> GetLocationByIdAsync(int id)
+        public async Task<Location> GetByIdAsync(int id)
         {
             return await _locationRepository.GetLocationByIdAsync(id);
         }
 
-        public async Task AddLocationAsync(Location location)
+        public async Task AddAsync(Location location)
         {
             await _locationRepository.AddLocationAsync(location);
         }
 
-        public async Task UpdateLocationAsync(Location location)
+        public async Task UpdateAsync(Location location)
         {
             await _locationRepository.UpdateLocationAsync(location);
         }
 
-        public async Task DeleteLocationAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _locationRepository.DeleteLocationAsync(id);
         }

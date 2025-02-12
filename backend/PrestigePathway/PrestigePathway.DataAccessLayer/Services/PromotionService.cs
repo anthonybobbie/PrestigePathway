@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Models;
-using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
+﻿using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -16,27 +13,27 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _promotionRepository = promotionRepository;
         }
 
-        public async Task<IEnumerable<Promotion>> GetAllPromotionsAsync()
+        public async Task<IEnumerable<Promotion>> GetAllAsync()
         {
             return await _promotionRepository.GetAllPromotionsAsync();
         }
 
-        public async Task<Promotion> GetPromotionByIdAsync(int id)
+        public async Task<Promotion> GetByIdAsync(int id)
         {
             return await _promotionRepository.GetPromotionByIdAsync(id);
         }
 
-        public async Task AddPromotionAsync(Promotion promotion)
+        public async Task AddAsync(Promotion promotion)
         {
             await _promotionRepository.AddPromotionAsync(promotion);
         }
 
-        public async Task UpdatePromotionAsync(Promotion promotion)
+        public async Task UpdateAsync(Promotion promotion)
         {
             await _promotionRepository.UpdatePromotionAsync(promotion);
         }
 
-        public async Task DeletePromotionAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             await _promotionRepository.DeletePromotionAsync(id);
         }

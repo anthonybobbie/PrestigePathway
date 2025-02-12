@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PrestigePathway.DataAccessLayer.Models;
+﻿using PrestigePathway.BusinessLogicLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Abstractions.RepositoryAbstractions;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.BusinessLogicLayer.Services
 {
@@ -15,29 +13,35 @@ namespace PrestigePathway.BusinessLogicLayer.Services
             _partnerRepository = partnerRepository;
         }
 
-        public async Task<IEnumerable<Partner>> GetAllPartnersAsync()
+        public async Task AddAsync(Partner partner)
         {
-            return await _partnerRepository.GetAllPartnersAsync();
+            await _partnerRepository.AddAsync(partner);
         }
 
-        public async Task<Partner> GetPartnerByIdAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            return await _partnerRepository.GetPartnerByIdAsync(id);
+            await _partnerRepository.DeleteAsync(id);
         }
 
-        public async Task AddPartnerAsync(Partner partner)
+        public async Task<IEnumerable<Partner>> GetAllAsync()
         {
-            await _partnerRepository.AddPartnerAsync(partner);
+            return await _partnerRepository.GetAllAsync();
         }
 
-        public async Task UpdatePartnerAsync(Partner partner)
+        public async Task<Partner> GetByIdAsync(int id)
         {
-            await _partnerRepository.UpdatePartnerAsync(partner);
+            return await _partnerRepository.GetByIdAsync(id);
         }
 
-        public async Task DeletePartnerAsync(int id)
+        public async Task UpdateAsync(Partner entity)
         {
-            await _partnerRepository.DeletePartnerAsync(id);
+            await _partnerRepository.UpdateAsync(entity);
         }
+            
+        //public async Task<IEnumerable<Partner>> GetPartnersByLocationAsync(string location)
+        //{
+        //    return await _partnerRepository.GetPartnersByLocationAsync(string location);
+        //}
+
     }
 }

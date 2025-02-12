@@ -1,15 +1,12 @@
 ﻿using PrestigePathway.DataAccessLayer.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions
 {
-    public interface ITestimonialService
+    public interface ITestimonialService : IService<Testimonial>
     {
-        Task<IEnumerable<Testimonial>> GetAllTestimonialsAsync();
-        Task<Testimonial> GetTestimonialByIdAsync(int id);
-        Task AddTestimonialAsync(Testimonial testimonial);
-        Task UpdateTestimonialAsync(Testimonial testimonial);
-        Task DeleteTestimonialAsync(int id);
+        //Task<IEnumerable<Testimonial>> GetAllsAsync();
+        //Task<Testimonial> GetByIdAsync(int id);
+        //Task AddAsync(Testimonial testimonial);
+        //Task UpdateAsync(Testimonial testimonial);
+        //Task DeleteAsync(int id);
     }
 }

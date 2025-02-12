@@ -14,6 +14,9 @@ using FluentValidation;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
+using PrestigePathway.BusinessLogicLayer.Abstractions;
+using Microsoft.OpenApi.Models;
 
 namespace PrestigePathway.Api
 {
@@ -99,6 +102,8 @@ namespace PrestigePathway.Api
                 });
             });
 
+            builder.Services.AddControllers();
+
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
@@ -107,21 +112,21 @@ namespace PrestigePathway.Api
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
-            // RepositoryAbstractions
+            // Repositories
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
-            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();            
             builder.Services.AddScoped<IServiceLocationRepository, ServiceLocationRepository>();
             builder.Services.AddScoped<IStaffAssistantRepository, StaffAssistantRepository>();
             builder.Services.AddScoped<IStaffRepository, StaffRepository>();
             builder.Services.AddScoped<ITestimonialRepository, TestimonialRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            // ServiceAbstractions
+            // Service
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IClientService, ClientService>();
             builder.Services.AddScoped<ILocationService, LocationService>();

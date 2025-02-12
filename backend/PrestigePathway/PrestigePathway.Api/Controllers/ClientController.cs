@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.DataAccessLayer.Abstractions.ServicesAbstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
@@ -9,63 +9,21 @@ namespace PrestigePathway.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ClientController : ControllerBase
+    public class ClientController : BaseController<Client, IClientService>
     {
-        private readonly IClientService _clientService;
-
-        public ClientController(IClientService clientService)
+        public ClientController(IClientService clientService, ILogger<ClientController> logger)
+            : base(clientService, logger)
         {
-            _clientService = clientService;
         }
 
-        // GET: api/Client
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Client>>> GetClients()
+        protected override int GetEntityId(Client entity) => entity.ID; 
+
+        [HttpGet("SearchClientByName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<Client>>> SearchClients(string name)
         {
-            var clients = await _clientService.GetAllClientsAsync();
+            var clients = await _service.SearchClientsByNameAsync(name);
             return Ok(clients);
-        }
-
-        // GET: api/Client/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Client>> GetClient(int id)
-        {
-            var client = _clientService.GetClientByIdAsync(id);
-            if (client == null)
-            {
-                return BadRequest();
-            }
-
-            return await _clientService.GetClientByIdAsync(id);
-        }
-
-        // POST: api/Client
-        [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(Client client)
-        {
-            await _clientService.AddClientAsync(client);
-            return CreatedAtAction(nameof(GetClient), new { id = client.ID }, client);
-        }
-
-        // PUT: api/Client/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(int id, Client client)
-        {
-            if (id != client.ID)
-            {
-                return BadRequest();
-            }
-
-            await _clientService.UpdateClientAsync(client);
-            return NoContent();
-        }
-
-        // DELETE: api/Client/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient(int id)
-        {
-            await _clientService.DeleteClientAsync(id);
-            return NoContent();
         }
     }
 }
