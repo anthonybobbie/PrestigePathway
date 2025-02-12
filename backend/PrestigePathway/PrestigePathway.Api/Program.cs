@@ -101,7 +101,7 @@ namespace PrestigePathway.Api
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
             });
 
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
