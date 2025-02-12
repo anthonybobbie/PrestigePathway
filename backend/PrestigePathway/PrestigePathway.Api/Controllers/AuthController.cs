@@ -23,9 +23,9 @@ namespace PrestigePathway.Api.Controllers
 
         // POST: api/Auth/Login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User loginRequest)
+        public async Task<IActionResult> LoginAsync([FromBody] User loginRequest)
         {
-            var token = authService.LoginAsync(loginRequest.Username,loginRequest.Password);
+            var token = await authService.LoginAsync(loginRequest.Username,loginRequest.Password);
 
             if (token == null)
             {
