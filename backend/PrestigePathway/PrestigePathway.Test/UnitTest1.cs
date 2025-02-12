@@ -1,6 +1,6 @@
 namespace PrestigePathway.Test
 {
-    public class Tests
+    public class BookingServiceTest
     {
         [SetUp]
         public void Setup()
