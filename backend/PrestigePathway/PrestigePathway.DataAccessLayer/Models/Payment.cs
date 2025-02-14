@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 using System.Text.Json.Serialization;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class Payment
+    public class Payment : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

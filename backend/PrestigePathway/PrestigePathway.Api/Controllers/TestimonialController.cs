@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Staff;
+using PrestigePathway.Data.Models.Testimonial;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class TestimonialController : BaseController<Testimonial, ITestimonialService>
-    {
-        private readonly ITestimonialService _testimonialService;
 
-        public TestimonialController(ITestimonialService testimonialService, ILogger<TestimonialController> logger)
+    public class TestimonialController : BaseController<Testimonial, ITestimonialService, TestimonialResponse>
+    {
+ 
+        public TestimonialController(IService<Testimonial, TestimonialResponse>   testimonialService, ILogger<TestimonialController> logger)
             : base(testimonialService, logger) 
         {
+        }
+
+        protected override int GetEntityId(Testimonial entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

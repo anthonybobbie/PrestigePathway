@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class ServiceLocation
+    public class ServiceLocation : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

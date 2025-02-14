@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PrestigePathway.DataAccessLayer.Repositories;
+using System.ComponentModel.DataAnnotations;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class User
+    public class User : IEntity
     {
         public int ID { get; set; }
         public string Username { get; set; }

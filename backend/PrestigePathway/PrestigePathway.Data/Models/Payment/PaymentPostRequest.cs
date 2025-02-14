@@ -1,0 +1,6 @@
+﻿namespace PrestigePathway.Data.Models.Payment
+{
+    public class PaymentPostRequest
+    {
+    }
+}

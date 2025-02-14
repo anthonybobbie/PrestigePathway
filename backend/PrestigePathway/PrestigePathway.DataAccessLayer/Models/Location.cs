@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class Location
+    public class Location : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -40,6 +41,6 @@ namespace PrestigePathway.DataAccessLayer.Models
 
         public bool IsActive { get; set; } = true;
 
-        public ICollection<ServiceLocation> ServiceLocations { get; set; }
+       // public ICollection<ServiceLocation> ServiceLocations { get; set; }
     }
 }

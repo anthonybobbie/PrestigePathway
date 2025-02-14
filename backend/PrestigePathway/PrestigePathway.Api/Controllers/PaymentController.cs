@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Partner;
+using PrestigePathway.Data.Models.Payment;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PaymentController : BaseController<Payment, IPaymentService>
-    {
-        private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentService paymentService, ILogger<PaymentController> logger) 
+    public class PaymentController : BaseController<Payment, IPaymentService, PaymentResponse>
+    {
+ 
+        public PaymentController(IService<Payment, PaymentResponse> paymentService, ILogger<PaymentController> logger) 
             : base(paymentService, logger) 
         {
+        }
+
+        protected override int GetEntityId(Payment entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

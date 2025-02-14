@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using PrestigePathway.DataAccessLayer.Common.Enums;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class Booking
+    public class Booking:IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

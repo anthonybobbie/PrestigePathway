@@ -1,20 +1,21 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.ServiceLocation;
+using PrestigePathway.Data.Models.StaffAssisstant;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class StaffAssistantController : BaseController<StaffAssistant, IStaffAssistantService>
-    {
-        private readonly IStaffAssistantService _staffAssistantService;
 
-        public StaffAssistantController(IStaffAssistantService staffAssistantService, ILogger<StaffAssistantController> logger) : base(staffAssistantService, logger)
+    public class StaffAssistantController : BaseController<StaffAssistant, IStaffAssistantService, StaffAssisstantResponse>
+    {
+ 
+        public StaffAssistantController(IService<StaffAssistant, StaffAssisstantResponse> staffAssistantService, ILogger<StaffAssistantController> logger) : base(staffAssistantService, logger)
         {
+        }
+
+        protected override int GetEntityId(StaffAssistant entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

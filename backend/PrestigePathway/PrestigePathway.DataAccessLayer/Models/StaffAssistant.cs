@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Models;
 using System.Text.Json.Serialization;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class StaffAssistant
+    public class StaffAssistant : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

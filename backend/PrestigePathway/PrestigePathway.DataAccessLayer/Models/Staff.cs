@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PrestigePathway.DataAccessLayer.Common.Enums;
 using PrestigePathway.DataAccessLayer.Models;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class Staff
+    public class Staff : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

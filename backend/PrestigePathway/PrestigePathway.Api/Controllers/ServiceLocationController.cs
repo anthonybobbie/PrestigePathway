@@ -1,20 +1,21 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.BusinessLogicLayer.Abstractions.ServiceAbstractions;
+﻿using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Service;
+using PrestigePathway.Data.Models.ServiceLocation;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ServiceLocationController : BaseController<ServiceLocation, IServiceLocationService>
-    {
-        private readonly IServiceLocationService _serviceLocationService;
 
-        public ServiceLocationController(IServiceLocationService serviceLocationService, ILogger<ServiceLocationController> logger) : base(serviceLocationService, logger) 
+    public class ServiceLocationController : BaseController<ServiceLocation, IServiceLocationService, ServiceLocationResponse>
+    {
+ 
+        public ServiceLocationController(IService<ServiceLocation, ServiceLocationResponse> serviceLocationService, ILogger<ServiceLocationController> logger) : base(serviceLocationService, logger) 
         {
+        }
+
+        protected override int GetEntityId(ServiceLocation entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

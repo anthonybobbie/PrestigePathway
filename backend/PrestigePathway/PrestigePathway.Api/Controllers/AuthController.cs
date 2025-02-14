@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using PrestigePathway.DataAccessLayer.Abstractions.ServiceAbstractions;
+using PrestigePathway.Data.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

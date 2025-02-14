@@ -1,10 +1,11 @@
 ﻿using PrestigePathway.DataAccessLayer.Common.Enums;
+using PrestigePathway.DataAccessLayer.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PrestigePathway.DataAccessLayer.Models
 {
-    public class Client
+    public class Client:IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

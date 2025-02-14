@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.BusinessLogicLayer.Abstractions;
+﻿using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Location;
+using PrestigePathway.Data.Models.Partner;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PartnerController : BaseController<Partner, IPartnerService>
-    {
-        private readonly IPartnerService _partnerService;
 
-        public PartnerController(IPartnerService partnerService, ILogger<PartnerController> logger) 
+    public class PartnerController : BaseController<Partner, IPartnerService, PartnerResponse>
+    {
+     
+        public PartnerController(IService<Partner, PartnerResponse> partnerService, ILogger<PartnerController> logger) 
             : base(partnerService, logger) 
         {
+        }
+
+        protected override int GetEntityId(Partner entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

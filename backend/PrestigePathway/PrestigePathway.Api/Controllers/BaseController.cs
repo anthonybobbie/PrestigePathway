@@ -1,43 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PrestigePathway.DataAccessLayer.Abstractions;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Booking;
+using System.Net;
 
 namespace PrestigePathway.Api.Controllers
 {
-    public class BaseController<TEntity, TService> : ControllerBase
+    [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public abstract class BaseController<TEntity, TService,TResponse> : ControllerBase
         where TEntity : class
-        where TService : IService<TEntity>
+        where TService : IService<TEntity,TResponse>
     {
-        protected readonly TService _service;
-        protected readonly ILogger<BaseController<TEntity, TService>> _logger;
+        protected readonly IService<TEntity, TResponse> _service;
+        protected readonly ILogger<BaseController<TEntity, TService, TResponse>> _logger;
 
-        public BaseController(TService service, ILogger<BaseController<TEntity, TService>> logger)
+        public BaseController(IService<TEntity, TResponse> service, ILogger<BaseController<TEntity, TService, TResponse>> logger)
         {
             _service = service;
             _logger = logger;
         }
 
         // GET: api/[controller]
-        [HttpGet("GetAll[controller]s")]
+        [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
+        public virtual async Task<IActionResult> GetAll()
         {
             try
             {
                 var entities = await _service.GetAllAsync();
-                return Ok(entities);
+                return DataResponse(string.Empty, entities, HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching entities.");
-                return HandleError(ex, "An error occurred while fetching entities.");
+                return DataResponse<object>("An error occurred while fetching entities.",null, HttpStatusCode.InternalServerError);
             }
         }
 
         // GET: api/[controller]/5
-        [HttpGet("{id}/Get[controller]ById")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public virtual async Task<ActionResult<TEntity>> GetById(int id)
+        public virtual async Task<IActionResult> GetById(int id)
         {
             try
             {
@@ -48,7 +54,7 @@ namespace PrestigePathway.Api.Controllers
                     return NotFound();
                 }
 
-                return entity;
+                return DataResponse(string.Empty,entity, HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
@@ -58,13 +64,14 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // POST: api/[controller]
-        [HttpPost("Create[controller]")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public virtual async Task<ActionResult<TEntity>> Create(TEntity entity)
         {
             try
             {
                 await _service.AddAsync(entity);
+                 
                 return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) }, entity);
             }
             catch (Exception ex)
@@ -75,10 +82,10 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // PUT: api/[controller]/5
-        [HttpPut("{id}/Update[controller]")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public virtual async Task<IActionResult> Update(int id, TEntity entity)
+        public virtual async Task<IActionResult> Update([FromRoute] int id, TEntity entity)
         {
             try
             {
@@ -98,7 +105,7 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // DELETE: api/[controller]/5
-        [HttpDelete("{id}/Delete[controller]")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public virtual async Task<IActionResult> Delete(int id)
         {
@@ -121,10 +128,20 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // Helper method to get the ID of an entity
-        protected virtual int GetEntityId(TEntity entity)
+        protected abstract int GetEntityId(TEntity entity);
+         
+        // Helper method to handle errors
+        protected ActionResult DataResponse<T>(string ex, T Data, HttpStatusCode httpStatusCode)
         {
-            // Implement logic to get the ID of the entity (e.g., using reflection or a base interface)
-            throw new NotImplementedException("GetEntityId must be implemented in derived controllers.");
+            return Ok(new DataResponse<T>() { ErrorMessage = ex, Data = Data, StatusCode = httpStatusCode });
         }
+
+
+    }
+    public class DataResponse<T>
+    {
+        public string ErrorMessage { get; set; }
+        public T Data { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
     }
 }
