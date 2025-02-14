@@ -2,16 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Booking;
 using System.Net;
 
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public abstract class BaseController<TEntity, TService,TResponse> : ControllerBase
+    public abstract class BaseController<TEntity, TService, TResponse> : ControllerBase
         where TEntity : class
-        where TService : IService<TEntity,TResponse>
+        where TService : IService<TEntity, TResponse>
     {
         protected readonly IService<TEntity, TResponse> _service;
         protected readonly ILogger<BaseController<TEntity, TService, TResponse>> _logger;
@@ -23,19 +22,19 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // GET: api/[controller]
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual async Task<IActionResult> GetAll()
         {
             try
             {
                 var entities = await _service.GetAllAsync();
-                return DataResponse(string.Empty, entities, HttpStatusCode.OK);
+                return DataResponse("Fetched successfully", entities);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching entities.");
-                return DataResponse<object>("An error occurred while fetching entities.",null, HttpStatusCode.InternalServerError);
+                return HandleError(ex, "An error occurred while fetching entities.");
             }
         }
 
@@ -48,13 +47,11 @@ namespace PrestigePathway.Api.Controllers
             try
             {
                 var entity = await _service.GetByIdAsync(id);
-
                 if (entity == null)
                 {
-                    return NotFound();
+                    return NotFound(new ApiResponse<object> { Success = false, Message = "Entity not found." });
                 }
-
-                return DataResponse(string.Empty,entity, HttpStatusCode.OK);
+                return DataResponse("Fetched successfully", entity);
             }
             catch (Exception ex)
             {
@@ -66,13 +63,15 @@ namespace PrestigePathway.Api.Controllers
         // POST: api/[controller]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public virtual async Task<ActionResult<TEntity>> Create(TEntity entity)
+        public virtual async Task<ActionResult<ApiResponse<TResponse>>> Create(TEntity entity)
         {
             try
             {
-                await _service.AddAsync(entity);
-                 
-                return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) }, entity);
+                var createdEntity = await _service.AddAsync(entity);
+                var response = await _service.GetByIdAsync(GetEntityId(entity));
+
+                return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) },
+                    new ApiResponse<TResponse> { Success = true, Message = "Entity created successfully", Data = response });
             }
             catch (Exception ex)
             {
@@ -84,18 +83,24 @@ namespace PrestigePathway.Api.Controllers
         // PUT: api/[controller]/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual async Task<IActionResult> Update([FromRoute] int id, TEntity entity)
         {
             try
             {
                 if (id != GetEntityId(entity))
                 {
-                    return BadRequest();
+                    return BadRequest(new ApiResponse<object> { Success = false, Message = "Mismatched ID in request." });
+                }
+
+                var existingEntity = await _service.GetByIdAsync(id);
+                if (existingEntity == null)
+                {
+                    return NotFound(new ApiResponse<object> { Success = false, Message = "Entity not found." });
                 }
 
                 await _service.UpdateAsync(entity);
-                return NoContent();
+                return Ok(new ApiResponse<TResponse> { Success = true, Message = "Entity updated successfully." });
             }
             catch (Exception ex)
             {
@@ -111,6 +116,12 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
+                var entity = await _service.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    return NotFound(new ApiResponse<object> { Success = false, Message = "Entity not found." });
+                }
+
                 await _service.DeleteAsync(id);
                 return NoContent();
             }
@@ -124,24 +135,29 @@ namespace PrestigePathway.Api.Controllers
         // Helper method to handle errors
         protected ActionResult HandleError(Exception ex, string message)
         {
-            return StatusCode(500, new { Message = message, Details = ex.Message });
+            return StatusCode(500, new ApiResponse<object> { Success = false, Message = message, Data = ex.Message });
         }
 
-        // Helper method to get the ID of an entity
+        // Helper method to get the ID of an entity (must be implemented by derived classes)
         protected abstract int GetEntityId(TEntity entity);
-         
-        // Helper method to handle errors
-        protected ActionResult DataResponse<T>(string ex, T Data, HttpStatusCode httpStatusCode)
+
+        // Helper method for standardized API responses
+        protected ActionResult DataResponse<T>(string message, T data, bool success = true)
         {
-            return Ok(new DataResponse<T>() { ErrorMessage = ex, Data = Data, StatusCode = httpStatusCode });
+            return Ok(new ApiResponse<T>
+            {
+                Success = success,
+                Message = message,
+                Data = data
+            });
         }
-
-
     }
-    public class DataResponse<T>
+
+    // Standardized API response model
+    public class ApiResponse<T>
     {
-        public string ErrorMessage { get; set; }
+        public bool Success { get; set; }
+        public string Message { get; set; }
         public T Data { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
     }
 }
