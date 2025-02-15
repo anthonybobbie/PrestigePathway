@@ -24,6 +24,10 @@ namespace PrestigePathway.DataAccessLayer
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ServiceType> ServiceTypes { get; set; }
+        public DbSet<ServiceOption> ServiceOptions { get; set; }
+        public DbSet<ServicePartner> ServicePartners { get; set; }
+        public DbSet<ServiceDetail> ServiceDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,6 +76,66 @@ namespace PrestigePathway.DataAccessLayer
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
+            
+            modelBuilder.Entity<ServiceType>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.TypeName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.Property(e => e.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+
+            modelBuilder.Entity<ServiceOption>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.OptionName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.HasOne(e => e.ServiceType)
+                    .WithMany(e => e.ServiceOptions)
+                    .HasForeignKey(e => e.ServiceTypeID)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<ServicePartner>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.PartnerName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.HasOne(e => e.ServiceType)
+                    .WithMany(e => e.ServicePartners)
+                    .HasForeignKey(e => e.ServiceTypeID)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.ServiceOption)
+                    .WithMany(e => e.ServicePartners)
+                    .HasForeignKey(e => e.ServiceOptionID)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<ServiceDetail>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.ServiceName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+                entity.HasOne(e => e.ServicePartner)
+                    .WithMany(e => e.ServiceDetails)
+                    .HasForeignKey(e => e.ServicePartnerID);
+                entity.HasOne(e => e.ServiceType)
+                    .WithMany(e => e.ServiceDetails)
+                    .HasForeignKey(e => e.ServiceTypeID)
+                    .OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(e => e.ServiceOption)
+                    .WithMany(e => e.ServiceDetails)
+                    .HasForeignKey(e => e.ServiceOptionID)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
         }
     }
 }
