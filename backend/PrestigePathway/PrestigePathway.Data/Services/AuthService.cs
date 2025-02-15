@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Booking;
 using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,12 +18,16 @@ namespace PrestigePathway.Data.Services
         private readonly IRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
         private readonly IValidator<User> _userValidator;
+        //private readonly IService<UserRole, UserRoleResponse> userRoleService;
+
+       // public AuthService(IRepository<User> userRepository, IConfiguration configuration, IValidator<User> userValidator, IService<UserRole, UserRoleResponse> userRoleService)
 
         public AuthService(IRepository<User> userRepository, IConfiguration configuration, IValidator<User> userValidator)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _userValidator = userValidator;
+            //this.userRoleService = userRoleService;
         }
 
         public async Task<string> LoginAsync(string username, string password)
@@ -67,6 +72,9 @@ namespace PrestigePathway.Data.Services
 
         private string GenerateJwtToken(User user)
         {
+            // Fetch user roles
+           // var userRoles = await userRoleService.Query(x=>x.id == user.ID);
+
             var jwtSettings = _configuration.GetSection("Jwt");
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -77,6 +85,11 @@ namespace PrestigePathway.Data.Services
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
                new Claim(ClaimTypes.Name, user.Username)
             };
+
+            //foreach (var role in userRoles)
+            //{
+            //    claims.Add(new Claim(role.RoleName, role.RoleName));
+            //}
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

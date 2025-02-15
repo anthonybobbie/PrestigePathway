@@ -72,6 +72,10 @@ export function HomePage() {
         Cancelled: "error"
     };
 
+    // Handle edit booking
+    const handleEditService = (serviceId: number) => {
+        console.log("Edit Service:", serviceId);
+    };
     // Handle add booking
     const handleAddBooking = () => {
         console.log("Add Booking clicked");
@@ -149,12 +153,15 @@ export function HomePage() {
                                             </TableCell>
                                             <TableCell>{booking.notes}</TableCell>
                                             <TableCell align="center">
+                                               
+                                               <Button color="primary" onClick={() => handleEditBooking(booking.serviceID)}>Service Details</Button>
                                                 <IconButton color="primary" onClick={() => handleEditBooking(booking.id)}>
                                                     <Edit />
                                                 </IconButton>
                                                 <IconButton color="error" onClick={() => handleDeleteBooking(booking.id)}>
                                                     <Delete />
                                                 </IconButton>
+
                                             </TableCell>
                                         </TableRow>
                                     ))}
