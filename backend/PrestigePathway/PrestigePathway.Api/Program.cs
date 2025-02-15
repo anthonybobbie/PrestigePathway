@@ -98,11 +98,6 @@ namespace PrestigePathway.Api
 
             builder.Services.AddControllers();
 
-            builder.Services.AddControllers().AddJsonOptions(options =>
-            {
-                 
-            });
-
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
