@@ -16,16 +16,13 @@ namespace PrestigePathway.DataAccessLayer.Models
 
         [ForeignKey("Service")]
         public int ServiceID { get; set; }
-
         public DateTime BookingDate { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
         [Required]
         public BookingStatus Status { get; set; } = BookingStatus.Pending;
-
         public string? Notes { get; set; }
-
         public Client Client { get; set; }
         public Service Service { get; set; }
         public Payment Payment { get; set; }

@@ -7,6 +7,7 @@ using System.Net;
 namespace PrestigePathway.Api.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public abstract class BaseController<TEntity, TService, TResponse> : ControllerBase
         where TEntity : class
