@@ -226,6 +226,7 @@ export function HomePage() {
     }
   };
 
+  // handle update
   const handleUpdate = async () => {
     if (!editedBooking) return;
 
