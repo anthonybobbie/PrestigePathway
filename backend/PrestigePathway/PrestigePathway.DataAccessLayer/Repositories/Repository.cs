@@ -20,7 +20,6 @@ namespace PrestigePathway.DataAccessLayer.Repositories
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-
             _context.Set<TEntity>().Add(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -41,8 +40,6 @@ namespace PrestigePathway.DataAccessLayer.Repositories
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await _context.Set<TEntity>().ToListAsync();
-
-
         }
 
         public async Task<TEntity> GetByIdAsync(int id)
@@ -56,9 +53,7 @@ namespace PrestigePathway.DataAccessLayer.Repositories
             await _context.SaveChangesAsync();
             return entity;
         }
-
         
-
         public  IQueryable<TEntity> Query()
         {
             return  _context.Set<TEntity>();

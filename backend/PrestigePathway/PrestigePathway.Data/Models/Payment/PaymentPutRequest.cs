@@ -1,6 +1,7 @@
 ﻿namespace PrestigePathway.Data.Models.Payment
 {
-    public class PaymentPutRequest
+    public class PaymentPutRequest : PaymentPostRequest
     {
+        public int ID { get; set; }
     }
 }
