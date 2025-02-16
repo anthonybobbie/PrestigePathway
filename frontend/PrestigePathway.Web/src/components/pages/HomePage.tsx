@@ -102,6 +102,7 @@ export function HomePage() {
             ),
           }))
         );
+
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -121,6 +122,141 @@ export function HomePage() {
         booking.service?.serviceName
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
+
+    }, [bookings, searchQuery]);
+
+    // Reset page if filtered data is smaller than the current pagination range
+    useEffect(() => {
+        if (page * rowsPerPage >= filteredBookings.length) {
+            setPage(0);
+        }
+    }, [filteredBookings.length]);
+
+    // Handle page change
+    const handlePageChange = (event: any, newPage: number) => {
+        setPage(newPage);
+    };
+
+    // Status color mapping for Chip component
+    const statusColors: Record<string, "success" | "warning" | "primary" | "error" | "info"> = {
+        Pending: "success",
+        Confirmed: "warning",
+        Completed: "primary",
+        Cancelled: "error"
+    };
+
+    // Handle edit booking
+    const handleEditService = (serviceId: number) => {
+        console.log("Edit Service:", serviceId);
+    };
+    // Handle add booking
+    const handleAddBooking = () => {
+        console.log("Add Booking clicked");
+    };
+
+    // Handle edit booking
+    const handleEditBooking = (id: number) => {
+        console.log("Edit Booking:", id);
+    };
+
+    // Handle delete booking
+    const handleDeleteBooking = (id: number) => {
+        console.log("Delete Booking:", id);
+    };
+
+    return (
+        <PageWrapper>
+            <Card sx={{ width: "90%", margin: "auto", boxShadow: 3, borderRadius: 3 }}>
+                <CardHeader 
+                    title="Booking Overview" 
+                    sx={{ backgroundColor: "#1976d2", color: "white", textAlign: "center" }} 
+                />
+                <CardContent>
+                    {/* Top Action Bar */}
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <TextField
+                            label="Search Bookings"
+                            variant="outlined"
+                            fullWidth
+                            sx={{ maxWidth: "400px" }}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <Box display="flex" alignItems="center">
+                            <Typography variant="body1" sx={{ mr: 2 }}>
+                                Total Records: <strong>{filteredBookings.length}</strong>
+                            </Typography>
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                startIcon={<Add />} 
+                                onClick={handleAddBooking}
+                            >
+                                Add Booking
+                            </Button>
+                        </Box>
+                    </Box>
+
+                    {bookings.length > 0 ? (
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Client</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Service</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Booking Date</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Start Time</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>End Time</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Notes</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }} align="center">Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredBookings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(booking => (
+                                        <TableRow key={booking.id}>
+                                            <TableCell>{booking.id}</TableCell>
+                                            <TableCell>{booking.client?.firstName} {booking.client?.lastName}</TableCell>
+                                            <TableCell>{booking.service?.serviceName}</TableCell>
+                                            <TableCell>{booking.bookingDate}</TableCell>
+                                            <TableCell>{booking.startTime}</TableCell>
+                                            <TableCell>{booking.endTime}</TableCell>
+                                            <TableCell>
+                                                <Chip label={booking.status} color={statusColors[booking.status] || "info"} />
+                                            </TableCell>
+                                            <TableCell>{booking.notes}</TableCell>
+                                            <TableCell align="center">
+                                               
+                                               <Button color="primary" onClick={() => handleEditBooking(booking.serviceID)}>Service Details</Button>
+                                                <IconButton color="primary" onClick={() => handleEditBooking(booking.id)}>
+                                                    <Edit />
+                                                </IconButton>
+                                                <IconButton color="error" onClick={() => handleDeleteBooking(booking.id)}>
+                                                    <Delete />
+                                                </IconButton>
+
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    ) : (
+                        <Typography variant="h6" textAlign="center">No bookings available</Typography>
+                    )}
+
+                    {/* Pagination */}
+                    <TablePagination
+                        component="div"
+                        count={filteredBookings.length}
+                        page={page}
+                        onPageChange={handlePageChange}
+                        rowsPerPage={rowsPerPage}
+                        rowsPerPageOptions={[]}
+                    />
+                </CardContent>
+            </Card>
+        </PageWrapper>
     );
   }, [bookings, searchQuery]);
 

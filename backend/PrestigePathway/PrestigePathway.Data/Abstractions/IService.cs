@@ -9,6 +9,7 @@
         Task<TResponse> AddAsync(TEntity entity);
         Task<TResponse> UpdateAsync(TEntity entity);
         Task<bool> DeleteAsync(int id);
+        IQueryable<TEntity> Query();
     }
 }
 

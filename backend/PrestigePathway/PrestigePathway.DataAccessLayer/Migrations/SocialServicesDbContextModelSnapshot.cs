@@ -317,6 +317,51 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceDetail", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ServiceOptionID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicePartnerID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceTypeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ServiceOptionID");
+
+                    b.HasIndex("ServicePartnerID");
+
+                    b.HasIndex("ServiceTypeID");
+
+                    b.ToTable("ServiceDetails");
+                });
+
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceLocation", b =>
                 {
                     b.Property<int>("ServiceID")
@@ -339,6 +384,107 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("LocationID");
 
                     b.ToTable("ServiceLocations");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceOption", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OptionName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ServiceTypeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ServiceTypeID");
+
+                    b.ToTable("ServiceOptions");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServicePartner", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PartnerName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ServiceOptionID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceTypeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ServiceOptionID");
+
+                    b.HasIndex("ServiceTypeID");
+
+                    b.ToTable("ServicePartners");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceType", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ServiceTypes");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Staff", b =>
@@ -509,10 +655,37 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                         .HasForeignKey("PartnerID");
                 });
 
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceDetail", b =>
+                {
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServiceOption", "ServiceOption")
+                        .WithMany("ServiceDetails")
+                        .HasForeignKey("ServiceOptionID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServicePartner", "ServicePartner")
+                        .WithMany("ServiceDetails")
+                        .HasForeignKey("ServicePartnerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServiceType", "ServiceType")
+                        .WithMany("ServiceDetails")
+                        .HasForeignKey("ServiceTypeID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ServiceOption");
+
+                    b.Navigation("ServicePartner");
+
+                    b.Navigation("ServiceType");
+                });
+
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceLocation", b =>
                 {
                     b.HasOne("PrestigePathway.DataAccessLayer.Models.Location", "Location")
-                        .WithMany("ServiceLocations")
+                        .WithMany()
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -526,6 +699,36 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceOption", b =>
+                {
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServiceType", "ServiceType")
+                        .WithMany("ServiceOptions")
+                        .HasForeignKey("ServiceTypeID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ServiceType");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServicePartner", b =>
+                {
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServiceOption", "ServiceOption")
+                        .WithMany("ServicePartners")
+                        .HasForeignKey("ServiceOptionID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("PrestigePathway.DataAccessLayer.Models.ServiceType", "ServiceType")
+                        .WithMany("ServicePartners")
+                        .HasForeignKey("ServiceTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ServiceOption");
+
+                    b.Navigation("ServiceType");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.StaffAssistant", b =>
@@ -566,11 +769,6 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.Navigation("StaffAssistants");
                 });
 
-            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Location", b =>
-                {
-                    b.Navigation("ServiceLocations");
-                });
-
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Partner", b =>
                 {
                     b.Navigation("Services");
@@ -579,6 +777,27 @@ namespace PrestigePathway.DataAccessLayer.Migrations
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Service", b =>
                 {
                     b.Navigation("ServiceLocations");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceOption", b =>
+                {
+                    b.Navigation("ServiceDetails");
+
+                    b.Navigation("ServicePartners");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServicePartner", b =>
+                {
+                    b.Navigation("ServiceDetails");
+                });
+
+            modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceType", b =>
+                {
+                    b.Navigation("ServiceDetails");
+
+                    b.Navigation("ServiceOptions");
+
+                    b.Navigation("ServicePartners");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Staff", b =>

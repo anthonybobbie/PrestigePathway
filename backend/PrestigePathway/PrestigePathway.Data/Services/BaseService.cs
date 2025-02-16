@@ -41,6 +41,11 @@ namespace PrestigePathway.Data.Services
             return entity == null ? default : entity.Adapt<TResponse>();
         }
 
+        public IQueryable<TEntity> Query()
+        {
+           return  _repository.Query();
+        }
+
         public async Task<TResponse> UpdateAsync(TEntity entity)
         {
             var updatedEntity = await _repository.UpdateAsync(entity);

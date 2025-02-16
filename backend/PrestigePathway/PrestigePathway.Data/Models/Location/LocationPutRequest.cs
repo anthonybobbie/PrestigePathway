@@ -1,6 +1,7 @@
 ﻿namespace PrestigePathway.Data.Models.Location
 {
-    public class LocationPutRequest
+    public class LocationPutRequest : LocationPostRequest
     {
+        public int ID { get; set; }
     }
 }
