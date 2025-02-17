@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.Data.Models.Promotion
 {
-    public class PromotionResponse : IEntity
+    public class PromotionResponse : IEntity, IEntityTracker
     {
         public int ID { get; set; }
         public string PromotionName { get; set; }
@@ -16,6 +17,8 @@ namespace PrestigePathway.Data.Models.Promotion
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; } = true; 
-        public int? ServiceID { get; set; } 
+        public int? ServiceID { get; set; }
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
 }
