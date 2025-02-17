@@ -1,7 +1,8 @@
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 namespace PrestigePathway.Data.Models.ServiceOption;
 
-public class ServiceOptionResponse : IEntity
+public class ServiceOptionResponse : IEntity, IEntityTracker
 {
     public int ID { get; set; }
     public int ServiceTypeID { get; set; }

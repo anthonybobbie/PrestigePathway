@@ -1,0 +1,6 @@
+bin/
+obj/
+
+# Rider IDE-specific files
+.idea/
+*.iml

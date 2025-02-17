@@ -12,9 +12,6 @@ namespace PrestigePathway.Api.Controllers
             : base(staffService, logger) 
         { }
 
-        protected override int GetEntityId(Staff entity)
-        {
-            throw new NotImplementedException();
-        }
+        protected override int GetEntityId(Staff entity) => entity.ID;
     }
 }

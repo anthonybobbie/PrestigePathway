@@ -1,6 +1,8 @@
-﻿namespace PrestigePathway.Data.Models.Booking
+﻿using PrestigePathway.DataAccessLayer.Abstractions;
+
+namespace PrestigePathway.Data.Models.Booking
 {
-    public class BookingPostRequest
+    public class BookingPostRequest : IEntityTracker
     {
         public int ClientID { get; set; }
         public int ServiceID { get; set; }
@@ -9,6 +11,7 @@
         public DateTime EndTime { get; set; }
         public string Status { get; set; }
         public string? Notes { get; set; }
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
-
 }

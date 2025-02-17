@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.Data.Models.Partner
 {
-    public class PartnerResponse : IEntity
+    public class PartnerResponse : IEntity, IEntityTracker
     {
         public int ID { get; set; }
         [Required]
@@ -16,5 +17,7 @@ namespace PrestigePathway.Data.Models.Partner
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public bool IsActive { get; set; } = true;
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
 }

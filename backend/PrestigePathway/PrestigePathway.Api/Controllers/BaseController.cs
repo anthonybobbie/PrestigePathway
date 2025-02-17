@@ -70,7 +70,7 @@ namespace PrestigePathway.Api.Controllers
             {
                 var createdEntity = await _service.AddAsync(entity);
                 var response = await _service.GetByIdAsync(GetEntityId(entity));
-
+                
                 return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) },
                     new ApiResponse<TResponse> { Success = true, Message = "Entity created successfully", Data = response });
             }

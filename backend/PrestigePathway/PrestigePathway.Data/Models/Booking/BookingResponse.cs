@@ -1,8 +1,9 @@
-﻿using PrestigePathway.DataAccessLayer.Repositories;
+﻿using PrestigePathway.DataAccessLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.Data.Models.Booking
 {
-    public class BookingResponse : IEntity
+    public class BookingResponse : IEntity, IEntityTracker
     {
         public int ID { get; set; }
         public int ClientID { get; set; }
@@ -12,10 +13,7 @@ namespace PrestigePathway.Data.Models.Booking
         public DateTime EndTime { get; set; }
         public string Status { get; set; }
         public string? Notes { get; set; }
-        //public ClientResponse Client { get; set; }
-        //public ServiceResponse Service { get; set; }
-        //public PaymentResponse Payment { get; set; }
-        //public ICollection<StaffAssistantResponse> StaffAssistants { get; set; }
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
-
 }

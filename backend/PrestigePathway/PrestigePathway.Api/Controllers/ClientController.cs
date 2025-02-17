@@ -12,8 +12,6 @@ namespace PrestigePathway.Api.Controllers
         {
         }
 
-        protected override int GetEntityId(Client entity) => entity.ID; 
-
-        
+        protected override int GetEntityId(Client entity) => entity.ID;
     }
 }

@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrestigePathway.DataAccessLayer.Abstractions;
 
 namespace PrestigePathway.Data.Models.Location
 {
-    public class LocationPostRequest
+    public class LocationPostRequest : IEntityTracker
     {
         [Required]
         [StringLength(100)]
@@ -28,5 +29,7 @@ namespace PrestigePathway.Data.Models.Location
         [StringLength(50)]
         public string Country { get; set; }
         public bool IsActive { get; set; } = true;
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
 }

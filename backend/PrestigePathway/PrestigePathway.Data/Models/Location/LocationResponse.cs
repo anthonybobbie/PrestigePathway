@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using PrestigePathway.DataAccessLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.Data.Models.Location
 {
-    public class LocationResponse
+    public class LocationResponse : IEntity, IEntityTracker
     {
+        public int ID { get; set; }
         [Required]
         [StringLength(100)]
         public string LocationName { get; set; }
@@ -24,6 +27,7 @@ namespace PrestigePathway.Data.Models.Location
         [StringLength(50)]
         public string Country { get; set; }
         public bool IsActive { get; set; } = true;
- 
+        public DateTime? ModifiedOnUtc { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
     }
 }
