@@ -5,7 +5,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class BookingController : BaseController<Booking, IBookingService,BookingResponse>
+    public class BookingController : BaseController<Booking, IBookingService,BookingResponse,BookingPostRequest,BookingPutRequest>
     {
         public BookingController(IService<Booking, BookingResponse>   bookingService, ILogger<BookingController> logger)
             : base(bookingService, logger)

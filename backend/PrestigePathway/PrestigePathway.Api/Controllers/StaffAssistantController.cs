@@ -6,7 +6,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class StaffAssistantController : BaseController<StaffAssistant, IStaffAssistantService, StaffAssisstantResponse>
+    public class StaffAssistantController : BaseController<StaffAssistant, IStaffAssistantService, StaffAssisstantResponse,StaffAssisstantPostRequest,StaffAssisstantPutRequest>
     {
  
         public StaffAssistantController(IService<StaffAssistant, StaffAssisstantResponse> staffAssistantService, ILogger<StaffAssistantController> logger) : base(staffAssistantService, logger)

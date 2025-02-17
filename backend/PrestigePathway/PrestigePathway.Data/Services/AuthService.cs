@@ -83,7 +83,11 @@ namespace PrestigePathway.Data.Services
             var claims = new[]
             {
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-               new Claim(ClaimTypes.Name, user.Username)
+               new Claim(ClaimTypes.Name, user.Username),
+               new Claim("secret", "eddie secret"),
+
+                // Add additional claims here...
+                
             };
 
             //foreach (var role in userRoles)
