@@ -11,12 +11,9 @@ namespace PrestigePathway.Api.Controllers
  
         public LocationController(IService<Location, LocationResponse>   locationService, ILogger<LocationController> logger)
             : base(locationService, logger) {}
-       
-        
 
-        protected override int GetEntityId(Location entity)
-        {
-            throw new NotImplementedException();
-        }
+
+
+        protected override int GetEntityId(Location entity) => entity.ID;
     }
 }

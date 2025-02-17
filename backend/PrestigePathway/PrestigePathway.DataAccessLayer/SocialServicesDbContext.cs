@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.DataAccessLayer
 {
-
-
     public class SocialServicesDbContext : DbContext
     {
         public SocialServicesDbContext(DbContextOptions<SocialServicesDbContext> options)
@@ -32,89 +31,65 @@ namespace PrestigePathway.DataAccessLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure enums as strings
-            modelBuilder.Entity<Client>()
-                .Property(c => c.ClientType)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.Category)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<Booking>()
-                .Property(b => b.Status)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.PaymentMethod)
-                .HasConversion<string>();
-
-            // Configure relationships
-            modelBuilder.Entity<StaffAssistant>()
-                .HasKey(sa => new { sa.StaffID, sa.BookingID });
-
-            modelBuilder.Entity<ServiceLocation>()
-                .HasKey(sl => new { sl.ServiceID, sl.LocationID });
-
-            // Configure indexes
-            modelBuilder.Entity<Client>()
-                .HasIndex(c => c.Email)
-                .IsUnique();
-
-            modelBuilder.Entity<Payment>()
-                .HasIndex(p => p.TransactionID)
-                .IsUnique();
-
-            // Configure default values
-            modelBuilder.Entity<Client>()
-                .Property(c => c.RegistrationDate)
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.IsActive)
-                .HasDefaultValue(true);
-
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
-            
-            modelBuilder.Entity<ServiceType>(entity =>
+            modelBuilder.Entity<Booking>(entity =>
             {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.TypeName)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                entity.Property(e => e.CreatedOnUtc)
+                entity.Property(b => b.Status)
+                    .HasConversion<string>();
+                entity.Property(b => b.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.Property(c => c.ClientType)
+                    .HasConversion<string>();
+                entity.HasIndex(c => c.Email)
+                    .IsUnique();
+                entity.Property(c => c.Email)
+                    .IsRequired();
+                entity.Property(c => c.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+                // Configure default values
+                entity.Property(c => c.RegistrationDate)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.Property(l => l.CreatedOnUtc)
                     .HasDefaultValueSql("GETUTCDATE()");
             });
 
-            modelBuilder.Entity<ServiceOption>(entity =>
+            modelBuilder.Entity<Partner>(entity =>
             {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.OptionName)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                entity.HasOne(e => e.ServiceType)
-                    .WithMany(e => e.ServiceOptions)
-                    .HasForeignKey(e => e.ServiceTypeID)
-                    .OnDelete(DeleteBehavior.NoAction);
+                entity.Property(p => p.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(p => p.PaymentMethod)
+                    .HasConversion<string>();
+                entity.HasIndex(p => p.TransactionID).IsUnique();
+                entity.Property(p => p.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
             });
 
-            modelBuilder.Entity<ServicePartner>(entity =>
+            modelBuilder.Entity<Promotion>(entity =>
             {
-                entity.HasKey(e => e.ID);
-                entity.Property(e => e.PartnerName)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                entity.HasOne(e => e.ServiceType)
-                    .WithMany(e => e.ServicePartners)
-                    .HasForeignKey(e => e.ServiceTypeID)
-                    .OnDelete(DeleteBehavior.Cascade);
-                entity.HasOne(e => e.ServiceOption)
-                    .WithMany(e => e.ServicePartners)
-                    .HasForeignKey(e => e.ServiceOptionID)
-                    .OnDelete(DeleteBehavior.NoAction);
+                entity.Property(p => p.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
             });
-
+            
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.Property(s => s.Category)
+                    .HasConversion<string>();
+                entity.Property(s => s.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(s => s.IsActive)
+                    .HasDefaultValue(true);
+            });
+            
             modelBuilder.Entity<ServiceDetail>(entity =>
             {
                 entity.HasKey(e => e.ID);
@@ -135,7 +110,118 @@ namespace PrestigePathway.DataAccessLayer
                     .WithMany(e => e.ServiceDetails)
                     .HasForeignKey(e => e.ServiceOptionID)
                     .OnDelete(DeleteBehavior.NoAction);
+                entity.Property(sd => sd.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
             });
+            
+            modelBuilder.Entity<ServiceLocation>(entity =>
+            {
+                entity.HasKey(sl => new { sl.ServiceID, sl.LocationID });
+                entity.Property(sl => sl.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<ServiceOption>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.OptionName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.HasOne(e => e.ServiceType)
+                    .WithMany(e => e.ServiceOptions)
+                    .HasForeignKey(e => e.ServiceTypeID)
+                    .OnDelete(DeleteBehavior.NoAction);
+                entity.Property(so => so.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<ServicePartner>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.PartnerName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.HasOne(e => e.ServiceType)
+                    .WithMany(e => e.ServicePartners)
+                    .HasForeignKey(e => e.ServiceTypeID)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.ServiceOption)
+                    .WithMany(e => e.ServicePartners)
+                    .HasForeignKey(e => e.ServiceOptionID)
+                    .OnDelete(DeleteBehavior.NoAction);
+                entity.Property(sp => sp.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+
+            modelBuilder.Entity<ServiceType>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.TypeName)
+                    .IsRequired()
+                    .HasMaxLength(255);
+                entity.Property(e => e.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+
+            modelBuilder.Entity<Staff>(entity =>
+            {
+                entity.Property(s => s.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<StaffAssistant>(entity =>
+            {
+                // Configure relationships
+                entity.HasKey(sa => new { sa.StaffID, sa.BookingID });
+                entity.Property(sa => sa.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<Testimonial>(entity =>
+            {
+                entity.Property(t => t.CreatedOnUtc)
+                    .HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(u => u.Username)
+                    .IsUnique();
+            });
+        }
+
+        /// <summary>
+        /// Overrides SaveChanges to set CreatedOnUtc and ModifiedOnUtc properties.
+        /// </summary>
+        public override int SaveChanges()
+        {
+            UpdateTimestamps();
+            return base.SaveChanges();
+        }
+
+        /// <summary>
+        /// Overrides SaveChangesAsync to set CreatedOnUtc and ModifiedOnUtc properties.
+        /// </summary>
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateTimestamps();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates the CreatedOnUtc and ModifiedOnUtc timestamps before saving changes.
+        /// </summary>
+        private void UpdateTimestamps()
+        {
+            var entries = ChangeTracker.Entries<IEntityTracker>();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedOnUtc = DateTime.UtcNow;
+                }
+
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.ModifiedOnUtc = DateTime.UtcNow;
+                }
+            }
         }
     }
 }

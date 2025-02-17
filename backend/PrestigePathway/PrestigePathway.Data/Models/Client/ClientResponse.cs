@@ -2,10 +2,11 @@
 using PrestigePathway.DataAccessLayer.Repositories;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using PrestigePathway.DataAccessLayer.Abstractions;
 
 namespace PrestigePathway.Data.Models.Client
 {
-    public class ClientResponse : IEntity
+    public class ClientResponse : IEntity, IEntityTracker
     {
          public int ID { get; set; }
          [Required]
@@ -21,6 +22,8 @@ namespace PrestigePathway.Data.Models.Client
          public DateTime RegistrationDate { get; set; } 
          public string? Notes { get; set; }
 
+         public DateTime? ModifiedOnUtc { get; set; }
+         public DateTime CreatedOnUtc { get; set; }
     }
 
 }

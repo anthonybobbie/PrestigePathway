@@ -1,7 +1,8 @@
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 namespace PrestigePathway.Data.Models.ServiceDetail;
 
-public class ServiceDetailResponse : IEntity
+public class ServiceDetailResponse : IEntity, IEntityTracker
 {
     public int ID { get; set; }
     public string ServiceName { get; set; }

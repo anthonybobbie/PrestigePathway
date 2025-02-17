@@ -12,7 +12,5 @@ namespace PrestigePathway.Api.Controllers
         {
         }
         protected override int GetEntityId(Booking entity) => entity.ID;
-
-         
     }
 }

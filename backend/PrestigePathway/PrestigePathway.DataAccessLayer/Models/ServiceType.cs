@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 
 namespace PrestigePathway.DataAccessLayer.Models;
 
-public class ServiceType : IEntity
+public class ServiceType : IEntity, IEntityTracker
 {
     public int ID { get; set; }
     public string TypeName { get; set; }

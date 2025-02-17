@@ -1,7 +1,8 @@
+using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Repositories;
 namespace PrestigePathway.Data.Models.ServicePartner;
 
-public class ServicePartnerResponse : IEntity
+public class ServicePartnerResponse : IEntity, IEntityTracker
 {
     public int ID { get; set; }
     public string PartnerName { get; set; }

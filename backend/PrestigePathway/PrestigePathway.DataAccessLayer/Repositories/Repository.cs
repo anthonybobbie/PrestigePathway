@@ -3,13 +3,8 @@ using PrestigePathway.DataAccessLayer.Abstractions;
 
 namespace PrestigePathway.DataAccessLayer.Repositories
 {
-    public interface IEntity
-    {
-        int ID { get; set; }
-    }
-
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class ,IEntity
-
+    public class Repository<TEntity> : IRepository<TEntity> 
+        where TEntity : class, IEntity 
     {
         private readonly SocialServicesDbContext _context;
 
@@ -44,7 +39,7 @@ namespace PrestigePathway.DataAccessLayer.Repositories
 
         public async Task<TEntity> GetByIdAsync(int id)
         {
-            return await _context.Set<TEntity>().FirstOrDefaultAsync(b => b.ID == id);
+            return await _context.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(b => b.ID == id);
         }
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
@@ -59,5 +54,4 @@ namespace PrestigePathway.DataAccessLayer.Repositories
             return  _context.Set<TEntity>();
         }
     }
-
 }
