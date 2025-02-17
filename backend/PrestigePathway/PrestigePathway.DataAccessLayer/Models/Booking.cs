@@ -21,10 +21,10 @@ namespace PrestigePathway.DataAccessLayer.Models
         [Required]
         public BookingStatus Status { get; set; } = BookingStatus.Pending;
         public string? Notes { get; set; }
-        public Client Client { get; set; }
-        public Service Service { get; set; }
-        public Payment Payment { get; set; }
-        public ICollection<StaffAssistant> StaffAssistants { get; set; }
+        public Client? Client { get; set; }
+        public Service? Service { get; set; }
+        public Payment? Payment { get; set; }
+        public ICollection<StaffAssistant>? StaffAssistants { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

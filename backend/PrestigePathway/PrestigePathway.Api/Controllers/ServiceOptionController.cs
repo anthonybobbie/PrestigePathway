@@ -5,7 +5,7 @@ using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers;
 
-public class ServiceOptionController : BaseController<ServiceOption, IServiceOptionService, ServiceOptionResponse>
+public class ServiceOptionController : BaseController<ServiceOption, IServiceOptionService, ServiceOptionResponse,ServiceOptionPostRequest,ServiceOptionPutRequest>
 {
     public ServiceOptionController(IService<ServiceOption, ServiceOptionResponse> serviceOptionService, 
         ILogger<ServiceOptionController> logger) : base(serviceOptionService, logger)
