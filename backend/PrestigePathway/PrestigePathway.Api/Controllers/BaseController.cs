@@ -12,6 +12,7 @@ namespace PrestigePathway.Api.Controllers
     public abstract class BaseController<TEntity, TService, TResponse> : ControllerBase
         where TEntity : class
         where TService : IService<TEntity, TResponse>
+        where TResponse : class
     {
         protected readonly IService<TEntity, TResponse> _service;
         protected readonly ILogger<BaseController<TEntity, TService, TResponse>> _logger;

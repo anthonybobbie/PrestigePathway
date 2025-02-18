@@ -26,7 +26,7 @@ namespace PrestigePathway.DataAccessLayer.Models
         public bool IsActive { get; set; } = true; 
         [ForeignKey("Service")]
         public int? ServiceID { get; set; } 
-        public Service Service { get; set; }
+        public Service? Service { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

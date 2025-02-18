@@ -27,6 +27,8 @@ namespace PrestigePathway.DataAccessLayer
         public DbSet<ServiceOption> ServiceOptions { get; set; }
         public DbSet<ServicePartner> ServicePartners { get; set; }
         public DbSet<ServiceDetail> ServiceDetails { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -182,7 +184,19 @@ namespace PrestigePathway.DataAccessLayer
             {
                 entity.HasIndex(u => u.Username)
                     .IsUnique();
+                entity.Property(u => u.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
             });
+
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.HasKey(ur => new { ur.UserID, ur.RoleID });
+                entity.HasOne(ur => ur.Role)
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.RoleID);
+                entity.Property(ur => ur.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
+            });
+            
+            base.OnModelCreating(modelBuilder);
         }
 
         /// <summary>

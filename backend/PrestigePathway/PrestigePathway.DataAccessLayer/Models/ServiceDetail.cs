@@ -14,7 +14,7 @@ public class ServiceDetail : IEntity, IEntityTracker
     public decimal Price { get; set; }
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? ModifiedOnUtc { get; set; }
-    public ServicePartner ServicePartner { get; set; }
-    public ServiceType ServiceType { get; set; }
-    public ServiceOption ServiceOption { get; set; }
+    public ServicePartner? ServicePartner { get; set; }
+    public ServiceType? ServiceType { get; set; }
+    public ServiceOption? ServiceOption { get; set; }
 }

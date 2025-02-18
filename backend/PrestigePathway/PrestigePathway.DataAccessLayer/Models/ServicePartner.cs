@@ -14,7 +14,7 @@ public class ServicePartner : IEntity, IEntityTracker
     public string? Address { get; set; }
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? ModifiedOnUtc { get; set; }
-    public ServiceType ServiceType { get; set; }
-    public ServiceOption ServiceOption { get; set; }
-    public ICollection<ServiceDetail> ServiceDetails { get; set; }
+    public ServiceType? ServiceType { get; set; }
+    public ServiceOption? ServiceOption { get; set; }
+    public ICollection<ServiceDetail>? ServiceDetails { get; set; }
 }

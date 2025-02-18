@@ -28,7 +28,7 @@ namespace PrestigePathway.DataAccessLayer.Models
         [StringLength(200)]
         public string? Address { get; set; }
         [Required]
-        public ClientType ClientType { get; set; }
+        public ClientType? ClientType { get; set; }
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
         public string? Notes { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }

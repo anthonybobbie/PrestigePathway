@@ -13,19 +13,19 @@ namespace PrestigePathway.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IAuthService authService;
+        private readonly IAuthService _authService;
 
         public AuthController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;
-            this.authService = authService;
+            _authService = authService;
         }
 
         // POST: api/Auth/Login
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] User loginRequest)
         {
-            var token = await authService.LoginAsync(loginRequest.Username,loginRequest.Password);
+            var token = await _authService.LoginAsync(loginRequest.Username,loginRequest.Password);
 
             if (token == null)
             {
@@ -37,28 +37,28 @@ namespace PrestigePathway.Api.Controllers
         }
 
         // Helper method to generate JWT token
-        private string GenerateJwtToken(User user)
-        {
-            var jwtSettings = _configuration.GetSection("Jwt");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username)
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryInMinutes"])),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = jwtSettings["Issuer"],
-                Audience = jwtSettings["Audience"]
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        // private string GenerateJwtToken(User user)
+        // {
+        //     var jwtSettings = _configuration.GetSection("Jwt");
+        //     var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+        //
+        //     var tokenDescriptor = new SecurityTokenDescriptor
+        //     {
+        //         Subject = new ClaimsIdentity(new[]
+        //         {
+        //             new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+        //             new Claim(ClaimTypes.Name, user.Username)
+        //         }),
+        //         Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryInMinutes"])),
+        //         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+        //         Issuer = jwtSettings["Issuer"],
+        //         Audience = jwtSettings["Audience"]
+        //     };
+        //
+        //     var tokenHandler = new JwtSecurityTokenHandler();
+        //     var token = tokenHandler.CreateToken(tokenDescriptor);
+        //     return tokenHandler.WriteToken(token);
+        // }
 
         //[HttpPost("register")]
         //public IActionResult Register([FromBody] User registerRequest)

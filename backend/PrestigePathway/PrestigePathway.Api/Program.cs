@@ -10,7 +10,6 @@ using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Repositories;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace PrestigePathway.Api
 {
@@ -101,8 +100,7 @@ namespace PrestigePathway.Api
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
-            
-
+            //Register services
             builder.Services.AddScoped(typeof(IService<,>), typeof(BaseService<,>));
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IAuthService, AuthService>();
@@ -119,7 +117,30 @@ namespace PrestigePathway.Api
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                
+                // using (var scope = app.Services.CreateScope())
+                // {
+                //     var dbContext = scope.ServiceProvider.GetRequiredService<SocialServicesDbContext>();
+                //     if (!dbContext.Roles.Any())
+                //     {
+                //         dbContext.Roles.AddRange(
+                //             new Role { Name = "Booking.Read" },
+                //             new Role { Name = "Booking.Update" },
+                //             new Role { Name = "Booking.Delete" },
+                //             new Role { Name = "Booking.Update" }
+                //         );
+                //         dbContext.SaveChanges();
+                //     }
+                //
+                //     if (!dbContext.UserRoles.Any())
+                //     {
+                //         dbContext.UserRoles.Add(new UserRole { ID = 1, RoleID = 1 });
+                //         dbContext.SaveChanges();
+                //     }
+                // }
             }
+            
+            
 
             app.UseHttpsRedirection();
 

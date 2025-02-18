@@ -2,7 +2,7 @@
 {
     public interface IService<TEntity, TResponse>
         where TEntity : class
-
+        where TResponse : class
     {
         Task<IEnumerable<TResponse>> GetAllAsync();
         Task<TResponse> GetByIdAsync(int id);
