@@ -86,7 +86,11 @@ namespace PrestigePathway.Data.Services
             var claims = new List<Claim>
             {
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-               new Claim(ClaimTypes.Name, user.Username)
+               new Claim(ClaimTypes.Name, user.Username),
+               new Claim("secret", "eddie secret"),
+
+                // Add additional claims here...
+                
             };
             var roles = from userRole in _userRolesRepository.Query()
                 join role in _roleRepository.Query() on userRole.UserID equals role.ID

@@ -6,7 +6,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class TestimonialController : BaseController<Testimonial, ITestimonialService, TestimonialResponse>
+    public class TestimonialController : BaseController<Testimonial, ITestimonialService, TestimonialResponse,TestimonialPostRequest,TestimonialPutRequest>
     {
  
         public TestimonialController(IService<Testimonial, TestimonialResponse>   testimonialService, ILogger<TestimonialController> logger)

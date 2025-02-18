@@ -1,7 +1,8 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.ModelBuilder;
 using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Services;
 using PrestigePathway.DataAccessLayer;
@@ -10,6 +11,12 @@ using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Repositories;
 using System.Security.Claims;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using PrestigePathway.Api.Extensions;
+using System.Reflection.Emit;
+using Microsoft.OpenApi.Models;
+using PrestigePathway.Api.Infrastructure;
 
 namespace PrestigePathway.Api
 {
@@ -19,71 +26,27 @@ namespace PrestigePathway.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // jwt
+            // JWT Authentication Setup
             var jwtSettings = builder.Configuration.GetSection("Jwt");
 
-            // Add authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-           .AddJwtBearer(options =>
+            .AddJwtBearer(options =>
             {
-                if (builder.Environment.IsDevelopment())
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // In development, bypass the usual token validation logic
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings["Issuer"],
-                        ValidAudience = jwtSettings["Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            return Task.CompletedTask; // To observe if there are still issues
-                        },
-                        OnTokenValidated = context =>
-                        {
-                            // Optional: Add a fake claim or identity if needed
-                            var claimsIdentity = new ClaimsIdentity(new Claim[]
-                            {
-                                new Claim(ClaimTypes.NameIdentifier, "user_id"),
-                                new Claim(ClaimTypes.Name, "Developer")
-                            });
-                            context.Principal.AddIdentity(claimsIdentity);
-                            return Task.CompletedTask;
-                        },
-                        OnChallenge = context =>
-                        {
-                            // Prevent the default behavior of returning a 401
-                            context.HandleResponse();
-                            return Task.CompletedTask;
-                        }
-                    };
-                }
-                else
-                {
-                    // In production, enforce strict validation
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings["Issuer"],
-                        ValidAudience = jwtSettings["Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-                    };
-                }
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                };
             });
 
             builder.Services.AddAuthorization();
 
-            // Add CORS services
+            // Configure CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigins", policy =>
@@ -94,8 +57,16 @@ namespace PrestigePathway.Api
                           .AllowCredentials();
                 });
             });
-
-            builder.Services.AddControllers();
+            var modelBuilder = new ODataConventionModelBuilder();
+            // Add Controllers with OData Support
+            builder.Services.AddControllers()
+                .AddOData(options => options
+                    .EnableQueryFeatures().Count()
+                    .AddRouteComponents("odata", modelBuilder.AddPrestigePathwayEdmModel()))
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
 
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
@@ -104,44 +75,29 @@ namespace PrestigePathway.Api
             builder.Services.AddScoped(typeof(IService<,>), typeof(BaseService<,>));
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IValidator<User>, UserValidator>();
-            
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            // Configure FluentValidation
+            builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+            builder.Services.AddFluentValidationAutoValidation();
+
+            // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "PrestigePathway.Api", Version = "v1" });
+                c.OperationFilter<ODataSwaggerOperationFilter>(); // Register OData operation filter
+
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline
+            // Configure Middleware Pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                
-                // using (var scope = app.Services.CreateScope())
-                // {
-                //     var dbContext = scope.ServiceProvider.GetRequiredService<SocialServicesDbContext>();
-                //     if (!dbContext.Roles.Any())
-                //     {
-                //         dbContext.Roles.AddRange(
-                //             new Role { Name = "Booking.Read" },
-                //             new Role { Name = "Booking.Update" },
-                //             new Role { Name = "Booking.Delete" },
-                //             new Role { Name = "Booking.Update" }
-                //         );
-                //         dbContext.SaveChanges();
-                //     }
-                //
-                //     if (!dbContext.UserRoles.Any())
-                //     {
-                //         dbContext.UserRoles.Add(new UserRole { ID = 1, RoleID = 1 });
-                //         dbContext.SaveChanges();
-                //     }
-                // }
             }
             
-            
-
             app.UseHttpsRedirection();
 
             app.UseRouting();

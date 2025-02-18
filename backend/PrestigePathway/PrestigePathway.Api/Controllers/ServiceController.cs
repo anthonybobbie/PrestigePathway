@@ -5,7 +5,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class ServiceController : BaseController<Service, IServiceService, ServiceResponse>
+    public class ServiceController : BaseController<Service, IServiceService, ServiceResponse,ServicePostRequest,ServicePutRequest>
     {
         public ServiceController(IService<Service, ServiceResponse> serviceService, ILogger<ServiceController> logger) : base(serviceService, logger) 
         {

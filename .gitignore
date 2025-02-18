@@ -30,8 +30,17 @@
 /backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/PrestigePathway.Data.dll
 /backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/PrestigePathway.Data.pdb
 /backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/PrestigePathway.Data.sourcelink.json
+<<<<<<< HEAD
+/backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/ref/PrestigePathway.Data.dll
+/backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/refint/PrestigePathway.Data.dll
+/backend/PrestigePathway/PrestigePathway.Data/obj/Debug/net8.0/PrestigePathway.Data.csproj.AssemblyReference.cache
+=======
 /backend/PrestigePathway/PrestigePathway.Data/obj/PrestigePathway.Data.csproj.nuget.dgspec.json
 /backend/PrestigePathway/PrestigePathway.Data/obj/PrestigePathway.Data.csproj.nuget.g.props
 /backend/PrestigePathway/PrestigePathway.Data/obj/PrestigePathway.Data.csproj.nuget.g.targets
 /backend/PrestigePathway/PrestigePathway.Data/obj/project.assets.json
 /backend/PrestigePathway/PrestigePathway.Data/obj/project.nuget.cache
+>>>>>>> f8cb07428dfb3c9f635e82ba9e4448d551d15f8e
+/backend/PrestigePathway/PrestigePathway.Data/bin/Debug/net8.0/PrestigePathway.Data.deps.json
+/backend/PrestigePathway/PrestigePathway.Data/bin/Debug/net8.0/PrestigePathway.DataAccessLayer.dll
+/backend/PrestigePathway/PrestigePathway.Data/bin/Debug/net8.0/PrestigePathway.DataAccessLayer.pdb

@@ -6,7 +6,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class PromotionController : BaseController<Promotion, IPromotionService,PromotionResponse>
+    public class PromotionController : BaseController<Promotion, IPromotionService, PromotionResponse, PromotionPostRequest, PromotionPutRequest>
     {
          
         public PromotionController(IService<Promotion, PromotionResponse> promotionService, ILogger<PromotionController> logger) 

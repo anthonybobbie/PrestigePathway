@@ -6,7 +6,7 @@ using PrestigePathway.DataAccessLayer.Models;
 namespace PrestigePathway.Api.Controllers
 {
 
-    public class PaymentController : BaseController<Payment, IPaymentService, PaymentResponse>
+    public class PaymentController : BaseController<Payment, IPaymentService, PaymentResponse,PaymentPostRequest, PaymentPutRequest>
     {
  
         public PaymentController(IService<Payment, PaymentResponse> paymentService, ILogger<PaymentController> logger) 

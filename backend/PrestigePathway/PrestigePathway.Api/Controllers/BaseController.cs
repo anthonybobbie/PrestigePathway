@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.Data.Abstractions;
@@ -9,15 +10,15 @@ namespace PrestigePathway.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public abstract class BaseController<TEntity, TService, TResponse> : ControllerBase
+    public abstract class BaseController<TEntity, TService, TResponse,TCreateDto, TUpdateDto> : ControllerBase
         where TEntity : class
         where TService : IService<TEntity, TResponse>
         where TResponse : class
     {
         protected readonly IService<TEntity, TResponse> _service;
-        protected readonly ILogger<BaseController<TEntity, TService, TResponse>> _logger;
+        protected readonly ILogger<BaseController<TEntity, TService, TResponse, TCreateDto,TUpdateDto>> _logger;
 
-        public BaseController(IService<TEntity, TResponse> service, ILogger<BaseController<TEntity, TService, TResponse>> logger)
+        public BaseController(IService<TEntity, TResponse> service, ILogger<BaseController<TEntity, TService, TResponse, TCreateDto,TUpdateDto>> logger)
         {
             _service = service;
             _logger = logger;
@@ -65,10 +66,13 @@ namespace PrestigePathway.Api.Controllers
         // POST: api/[controller]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public virtual async Task<ActionResult<ApiResponse<TResponse>>> Create(TEntity entity)
+        public virtual async Task<ActionResult<ApiResponse<TResponse>>> Create(TCreateDto  createDto)
         {
             try
             {
+                 
+                var entity = createDto.Adapt<TEntity>();
+  
                 var createdEntity = await _service.AddAsync(entity);
                 var response = await _service.GetByIdAsync(GetEntityId(entity));
                 
