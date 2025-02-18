@@ -19,7 +19,7 @@ namespace PrestigePathway.DataAccessLayer.Models
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         [Required]
-        public BookingStatus Status { get; set; } = BookingStatus.Pending;
+        public string Status { get; set; }
         public string? Notes { get; set; }
         public Client? Client { get; set; }
         public Service? Service { get; set; }

@@ -32,9 +32,9 @@ namespace PrestigePathway.DataAccessLayer.Models
         [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
         [Required]
-        public StaffRole Role { get; set; }
+        public StaffRole? Role { get; set; }
         public bool IsActive { get; set; } = true;
-        public ICollection<StaffAssistant> StaffAssistants { get; set; }
+        public ICollection<StaffAssistant>? StaffAssistants { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

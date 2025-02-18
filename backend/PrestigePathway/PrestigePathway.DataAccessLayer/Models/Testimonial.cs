@@ -23,7 +23,7 @@ namespace PrestigePathway.DataAccessLayer.Models
         [Required]
         public bool IsApproved { get; set; } = false; 
         public int Rating { get; set; } 
-        public Client Client { get; set; }
+        public Client? Client { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

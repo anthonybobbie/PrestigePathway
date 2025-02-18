@@ -22,13 +22,13 @@ namespace PrestigePathway.DataAccessLayer.Models
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
         [Required]
-        public ServiceCategory Category { get; set; }
+        public ServiceCategory? Category { get; set; }
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
         [DisplayName("Duration Hours")]
         public int? DurationHours { get; set; }
         public bool IsActive { get; set; } = true;
-        public ICollection<ServiceLocation> ServiceLocations { get; set; }
+        public ICollection<ServiceLocation>? ServiceLocations { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

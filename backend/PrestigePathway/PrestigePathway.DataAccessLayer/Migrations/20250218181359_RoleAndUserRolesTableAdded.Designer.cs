@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrestigePathway.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using PrestigePathway.DataAccessLayer;
 namespace PrestigePathway.DataAccessLayer.Migrations
 {
     [DbContext(typeof(SocialServicesDbContext))]
-    partial class SocialServicesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218181359_RoleAndUserRolesTableAdded")]
+    partial class RoleAndUserRolesTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceID");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Client", b =>
@@ -126,7 +129,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Location", b =>
@@ -180,7 +183,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Locations", (string)null);
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Partner", b =>
@@ -224,7 +227,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Partners", (string)null);
+                    b.ToTable("Partners");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Payment", b =>
@@ -273,7 +276,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("TransactionID")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Promotion", b =>
@@ -321,7 +324,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceID");
 
-                    b.ToTable("Promotions", (string)null);
+                    b.ToTable("Promotions");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Role", b =>
@@ -387,7 +390,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("PartnerID");
 
-                    b.ToTable("Services", (string)null);
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceDetail", b =>
@@ -434,7 +437,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceTypeID");
 
-                    b.ToTable("ServiceDetails", (string)null);
+                    b.ToTable("ServiceDetails");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceLocation", b =>
@@ -466,7 +469,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("ServiceLocations", (string)null);
+                    b.ToTable("ServiceLocations");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceOption", b =>
@@ -500,7 +503,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceTypeID");
 
-                    b.ToTable("ServiceOptions", (string)null);
+                    b.ToTable("ServiceOptions");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServicePartner", b =>
@@ -545,7 +548,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ServiceTypeID");
 
-                    b.ToTable("ServicePartners", (string)null);
+                    b.ToTable("ServicePartners");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.ServiceType", b =>
@@ -571,7 +574,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ServiceTypes", (string)null);
+                    b.ToTable("ServiceTypes");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Staff", b =>
@@ -618,7 +621,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Staff", (string)null);
+                    b.ToTable("Staff");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.StaffAssistant", b =>
@@ -653,7 +656,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("BookingID");
 
-                    b.ToTable("StaffAssistant", (string)null);
+                    b.ToTable("StaffAssistant");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Testimonial", b =>
@@ -693,7 +696,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("ClientID");
 
-                    b.ToTable("Testimonials", (string)null);
+                    b.ToTable("Testimonials");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.User", b =>
@@ -725,7 +728,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.UserRole", b =>
@@ -737,9 +740,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOnUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ID")
                         .HasColumnType("int");

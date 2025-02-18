@@ -68,11 +68,10 @@ namespace PrestigePathway.Api
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
                 });
 
-            // Configure Entity Framework
-            builder.Services.AddDbContext<SocialServicesDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
+            builder.Services.AddDbContext<SocialServicesDbContext>(option =>
+                option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
-            // Configure Dependency Injection for Services and Repositories
+            //Register services
             builder.Services.AddScoped(typeof(IService<,>), typeof(BaseService<,>));
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IAuthService, AuthService>();
@@ -98,7 +97,7 @@ namespace PrestigePathway.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

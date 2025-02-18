@@ -20,8 +20,8 @@ namespace PrestigePathway.DataAccessLayer.Models
         [ForeignKey("Location")]
         public int LocationID { get; set; }
         public bool IsActive { get; set; } = true;
-        public Service Service { get; set; }
-        public Location Location { get; set; }
+        public Service? Service { get; set; }
+        public Location? Location { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

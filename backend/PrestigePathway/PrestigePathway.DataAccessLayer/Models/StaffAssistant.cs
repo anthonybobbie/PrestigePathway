@@ -25,9 +25,9 @@ namespace PrestigePathway.DataAccessLayer.Models
         [Required]
         public DateTime AssignmentDate { get; set; } = DateTime.UtcNow;
         public string? Notes { get; set; }
-        public Staff Staff { get; set; }
+        public Staff? Staff { get; set; }
         [JsonIgnore]
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
     }

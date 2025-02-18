@@ -1,14 +1,17 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Booking;
 using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
+using PrestigePathway.Data.Models.Auth;
+using PrestigePathway.Data.Models.UserRole;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace PrestigePathway.Data.Services
@@ -18,16 +21,16 @@ namespace PrestigePathway.Data.Services
         private readonly IRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
         private readonly IValidator<User> _userValidator;
-        //private readonly IService<UserRole, UserRoleResponse> userRoleService;
+        private readonly IRepository<UserRole> _userRolesRepository;
+        private readonly IRepository<Role> _roleRepository;
 
-       // public AuthService(IRepository<User> userRepository, IConfiguration configuration, IValidator<User> userValidator, IService<UserRole, UserRoleResponse> userRoleService)
-
-        public AuthService(IRepository<User> userRepository, IConfiguration configuration, IValidator<User> userValidator)
+        public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator, IRepository<UserRole> userRolesRepository)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _userValidator = userValidator;
-            //this.userRoleService = userRoleService;
+            _userRolesRepository = userRolesRepository;
+            _roleRepository = roleRepository;
         }
 
         public async Task<string> LoginAsync(string username, string password)
@@ -48,7 +51,7 @@ namespace PrestigePathway.Data.Services
             }
 
             // Generate and return a JWT token
-            return GenerateJwtToken(user);
+            return await GenerateJwtToken(user);
         }
 
         public async Task RegisterAsync(User user)
@@ -70,17 +73,17 @@ namespace PrestigePathway.Data.Services
             await _userRepository.AddAsync(user);
         }
 
-        private string GenerateJwtToken(User user)
+        private async Task<string> GenerateJwtToken(User user)
         {
             // Fetch user roles
-           // var userRoles = await userRoleService.Query(x=>x.id == user.ID);
-
+            var userRoles = _userRolesRepository.Query().Where(x => x.UserID == user.ID);
+            
             var jwtSettings = _configuration.GetSection("Jwt");
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
+            
+            var claims = new List<Claim>
             {
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
                new Claim(ClaimTypes.Name, user.Username),
@@ -89,11 +92,16 @@ namespace PrestigePathway.Data.Services
                 // Add additional claims here...
                 
             };
-
-            //foreach (var role in userRoles)
-            //{
-            //    claims.Add(new Claim(role.RoleName, role.RoleName));
-            //}
+            var roles = from userRole in _userRolesRepository.Query()
+                join role in _roleRepository.Query() on userRole.UserID equals role.ID
+                select role.Name;
+            foreach (var _role in roles)
+            {
+                if (!string.IsNullOrEmpty(_role))
+                {
+                    claims.Add(new Claim(_role, _role));
+                }
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -4,7 +4,9 @@ using PrestigePathway.DataAccessLayer.Abstractions;
 
 namespace PrestigePathway.Data.Services
 {
-    public class BaseService<TEntity, TResponse> : IService<TEntity, TResponse> where TEntity : class
+    public class BaseService<TEntity, TResponse> : IService<TEntity, TResponse> 
+        where TEntity : class
+        where TResponse : class
     {
         private readonly IRepository<TEntity> _repository;
 

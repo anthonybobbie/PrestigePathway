@@ -13,7 +13,7 @@ public class ServiceOption : IEntity, IEntityTracker
     public string? Description { get; set; }
     public DateTime CreatedOnUtc { get; set; } 
     public DateTime? ModifiedOnUtc { get; set; }
-    public ServiceType ServiceType { get; set; }
-    public ICollection<ServicePartner> ServicePartners { get; set; }
-    public ICollection<ServiceDetail> ServiceDetails { get; set; }
+    public ServiceType? ServiceType { get; set; }
+    public ICollection<ServicePartner>? ServicePartners { get; set; }
+    public ICollection<ServiceDetail>? ServiceDetails { get; set; }
 }
