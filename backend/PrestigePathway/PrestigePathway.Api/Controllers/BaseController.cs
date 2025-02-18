@@ -69,10 +69,9 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
-                //var username = User.Claims.Where(x=>x.Value=="secret");
+                 
                 var entity = createDto.Adapt<TEntity>();
-                //....
-                //entity.CreatedBy=username;
+  
                 var createdEntity = await _service.AddAsync(entity);
                 var response = await _service.GetByIdAsync(GetEntityId(entity));
                 
