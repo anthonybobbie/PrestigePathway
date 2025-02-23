@@ -105,6 +105,7 @@ namespace PrestigePathway.Api
             // Enable CORS
             app.UseCors("AllowSpecificOrigins");
 
+            //app.UseMiddleware<CustomAuthorizationMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 

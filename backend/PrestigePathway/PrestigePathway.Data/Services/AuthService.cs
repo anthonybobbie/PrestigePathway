@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using PrestigePathway.Data.Models.Auth;
 using PrestigePathway.Data.Models.UserRole;
 using ValidationException = FluentValidation.ValidationException;
+using System.Security.Cryptography;
 
 namespace PrestigePathway.Data.Services
 {
@@ -45,7 +46,8 @@ namespace PrestigePathway.Data.Services
             var user = await _userRepository.Query().FirstOrDefaultAsync(x=>x.Username == username);
 
             // Check if the user exists and the password matches
-            if (user == null || user.Password != password)
+
+            if (user == null || user.Password != HashPassword(password))
             {
                 throw new UnauthorizedAccessException("Invalid username or password.");
             }
@@ -54,7 +56,7 @@ namespace PrestigePathway.Data.Services
             return await GenerateJwtToken(user);
         }
 
-        public async Task RegisterAsync(User user)
+        public async Task<User> RegisterAsync(User user)
         {
             // Validate the user object
             var validationResult = await _userValidator.ValidateAsync(user);
@@ -70,7 +72,8 @@ namespace PrestigePathway.Data.Services
             }
 
             // Add the user to the database via the repository
-            await _userRepository.AddAsync(user);
+            user.Password = HashPassword(user.Password);
+            return await _userRepository.AddAsync(user);
         }
 
         private async Task<string> GenerateJwtToken(User user)
@@ -116,6 +119,14 @@ namespace PrestigePathway.Data.Services
 
             return tokenString;
         }
-
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+                byte[] hashedBytes = sha256.ComputeHash(passwordBytes);
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
     }
 }
