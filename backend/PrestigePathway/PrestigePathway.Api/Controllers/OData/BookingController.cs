@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.OData.Routing.Controllers;
 using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Mapster;
+using PrestigePathway.Data.Models.User;
 
 namespace PrestigePathway.Api.Controllers.OData
 {
@@ -47,6 +51,13 @@ namespace PrestigePathway.Api.Controllers.OData
     public class UserController : ODataBaseController<User>
     {
         public UserController(SocialServicesDbContext context) : base(context) { }
+
+        [EnableQuery]
+        public override IActionResult Get()
+        {
+            var dto = _context.Set<User>().ToList();
+            return Ok(dto.Adapt<List<UserDto>>());
+        }
     }
 
     public class StaffAssistantController : ODataBaseController<StaffAssistant>
@@ -79,8 +90,7 @@ namespace PrestigePathway.Api.Controllers.OData
         public PartnerController(SocialServicesDbContext context) : base(context) { }
     }
 
-
-
+    
 
 
 
