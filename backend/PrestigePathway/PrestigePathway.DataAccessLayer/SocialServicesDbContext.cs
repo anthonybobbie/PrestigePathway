@@ -226,15 +226,27 @@ namespace PrestigePathway.DataAccessLayer
 
             foreach (var entry in entries)
             {
-                if (entry.State == EntityState.Added)
+                switch (entry.State)
                 {
-                    entry.Entity.CreatedOnUtc = DateTime.UtcNow;
+                    case EntityState.Modified:
+                        entry.Entity.ModifiedOnUtc = DateTime.UtcNow;
+                        break;
+                    case EntityState.Added:
+                        entry.Entity.CreatedOnUtc = DateTime.UtcNow;
+                        break;
+                    default:
+                        break;
                 }
 
-                if (entry.State == EntityState.Modified)
-                {
-                    entry.Entity.ModifiedOnUtc = DateTime.UtcNow;
-                }
+                //if (entry.State == EntityState.Added)
+                //{
+                //    entry.Entity.CreatedOnUtc = DateTime.UtcNow;
+                //}
+
+                //if (entry.State == EntityState.Modified)
+                //{
+                //    entry.Entity.ModifiedOnUtc = DateTime.UtcNow;
+                //}
             }
         }
     }

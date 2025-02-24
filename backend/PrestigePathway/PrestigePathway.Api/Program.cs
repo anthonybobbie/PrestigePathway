@@ -17,6 +17,8 @@ using PrestigePathway.Api.Extensions;
 using System.Reflection.Emit;
 using Microsoft.OpenApi.Models;
 using PrestigePathway.Api.Infrastructure;
+using PrestigePathway.Data.Validators;
+using PrestigePathway.Data.Utilities;
 
 namespace PrestigePathway.Api
 {
@@ -79,6 +81,7 @@ namespace PrestigePathway.Api
             // Configure FluentValidation
             builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
