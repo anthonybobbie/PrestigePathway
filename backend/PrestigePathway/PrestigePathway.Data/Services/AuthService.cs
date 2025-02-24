@@ -13,6 +13,11 @@ using System.Threading.Tasks;
 using PrestigePathway.Data.Models.Auth;
 using PrestigePathway.Data.Models.UserRole;
 using ValidationException = FluentValidation.ValidationException;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using PrestigePathway.Data.Utilities;
+using Mapster;
+using PrestigePathway.Data.Models.User;
 
 namespace PrestigePathway.Data.Services
 {
@@ -23,17 +28,19 @@ namespace PrestigePathway.Data.Services
         private readonly IValidator<User> _userValidator;
         private readonly IRepository<UserRole> _userRolesRepository;
         private readonly IRepository<Role> _roleRepository;
+        private readonly IValidator<ChangePasswordRequest> _changePasswordValidator;
 
-        public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator, IRepository<UserRole> userRolesRepository)
+        public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator, IRepository<UserRole> userRolesRepository, IValidator<ChangePasswordRequest> changePasswordValidator)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _userValidator = userValidator;
             _userRolesRepository = userRolesRepository;
             _roleRepository = roleRepository;
+            _changePasswordValidator = changePasswordValidator;
         }
 
-        public async Task<string> LoginAsync(string username, string password)
+        public async Task<AuthUser> LoginAsync(string username, string password)
         {
             // Validate input
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -42,19 +49,19 @@ namespace PrestigePathway.Data.Services
             }
 
             // Fetch user from the repository
-            var user = await _userRepository.Query().FirstOrDefaultAsync(x=>x.Username == username);
+            var user = await _userRepository.Query().FirstOrDefaultAsync(x => x.Username == username);
 
-            // Check if the user exists and the password matches
-            if (user == null || user.Password != password)
+            // Verify the provided password against the stored hashed password
+            if (user == null || !VerifyPassword(user.Password, password))
             {
-                throw new UnauthorizedAccessException("Invalid username or password.");
+                throw new ArgumentException("Invalid username or password");
             }
 
             // Generate and return a JWT token
-            return await GenerateJwtToken(user);
+            return new() { Token = await GenerateJwtToken(user), User = user.Adapt<UserDto>() };
         }
 
-        public async Task RegisterAsync(User user)
+        public async Task<UserDto> RegisterAsync(User user)
         {
             // Validate the user object
             var validationResult = await _userValidator.ValidateAsync(user);
@@ -70,31 +77,33 @@ namespace PrestigePathway.Data.Services
             }
 
             // Add the user to the database via the repository
-            await _userRepository.AddAsync(user);
+            user.Password = HashPassword(user.Password);
+            var new_user = await _userRepository.AddAsync(user);
+            return new_user.Adapt<UserDto>();
         }
 
         private async Task<string> GenerateJwtToken(User user)
         {
             // Fetch user roles
             var userRoles = _userRolesRepository.Query().Where(x => x.UserID == user.ID);
-            
+
             var jwtSettings = _configuration.GetSection("Jwt");
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            
+
             var claims = new List<Claim>
             {
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-               new Claim(ClaimTypes.Name, user.Username),
-               new Claim("secret", "eddie secret"),
+               new Claim(ClaimTypes.Name, user.Username)
 
                 // Add additional claims here...
                 
             };
+
             var roles = from userRole in _userRolesRepository.Query()
-                join role in _roleRepository.Query() on userRole.UserID equals role.ID
-                select role.Name;
+                        join role in _roleRepository.Query() on userRole.UserID equals role.ID
+                        select role.Name;
             foreach (var _role in roles)
             {
                 if (!string.IsNullOrEmpty(_role))
@@ -117,5 +126,79 @@ namespace PrestigePathway.Data.Services
             return tokenString;
         }
 
+        private string HashPassword(string password)
+        {
+            //using (var sha256 = SHA256.Create())
+            //{
+            //    byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            //    byte[] hashedBytes = sha256.ComputeHash(passwordBytes);
+            //    return Convert.ToBase64String(hashedBytes);
+            //}
+
+            // Generate a 128-bit salt using a secure PRNG
+            byte[] salt = new byte[16];
+            using (var randomNumberGenerator = RandomNumberGenerator.Create())
+            {
+                randomNumberGenerator.GetBytes(salt);
+            }
+
+            // Derive a 256-bit subkey
+            var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100_000,
+                numBytesRequested: 32
+            ));
+
+            // Combine the salt and the hash into a single string
+            return $"{Convert.ToBase64String(salt)}:{hashed}";
+        }
+
+        private bool VerifyPassword(string hashedPassowrd, string providedPassword)
+        {
+            // Split the hashed password into salt and hash
+            var parts = hashedPassowrd.Split(":");
+            var salt = Convert.FromBase64String(parts[0]);
+            var storedHash = parts[1];
+
+            // Hash the provided password with the same salt
+            var hashProvidedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: providedPassword,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100_000,
+                numBytesRequested: 32
+            ));
+
+            // Compare the hashes
+            return storedHash == hashProvidedPassword;
+        }
+
+        public async Task ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            // Retrieve user
+            var user = await _userRepository.Query().FirstOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            // Verify current password
+            if (!VerifyPassword(user.Password, request.CurrentPassword))
+            {
+                throw new ArgumentException("Current password is incorrect.");
+            }
+
+            // Validate new password (e.g. length, complexity)
+            var validateNewPassword = await _changePasswordValidator.ValidateAsync(request);
+            if (!validateNewPassword.IsValid)
+            {
+                throw new ValidationException(validateNewPassword.Errors);
+            }
+
+            user.Password = HashPassword(request.NewPassword);
+            await _userRepository.UpdateAsync(user);
+        }
     }
 }

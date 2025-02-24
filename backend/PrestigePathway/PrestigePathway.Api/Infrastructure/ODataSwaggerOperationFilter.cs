@@ -60,5 +60,4 @@ namespace PrestigePathway.Api.Infrastructure
 
         }
     }
-
 }

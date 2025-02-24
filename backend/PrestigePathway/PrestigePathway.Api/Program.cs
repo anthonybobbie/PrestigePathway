@@ -17,6 +17,9 @@ using PrestigePathway.Api.Extensions;
 using System.Reflection.Emit;
 using Microsoft.OpenApi.Models;
 using PrestigePathway.Api.Infrastructure;
+using PrestigePathway.Data.Validators;
+using PrestigePathway.Data.Utilities;
+using System.Text.Json;
 
 namespace PrestigePathway.Api
 {
@@ -65,7 +68,14 @@ namespace PrestigePathway.Api
                     .AddRouteComponents("odata", modelBuilder.AddPrestigePathwayEdmModel()))
                 .AddJsonOptions(options =>
                 {
+                    // Ignore case when comparing property names
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+
+                    // Preserve references to prevent cycles
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+                    // Use camel case for property names in the response
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 });
 
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
@@ -79,6 +89,7 @@ namespace PrestigePathway.Api
             // Configure FluentValidation
             builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
@@ -105,6 +116,7 @@ namespace PrestigePathway.Api
             // Enable CORS
             app.UseCors("AllowSpecificOrigins");
 
+            //app.UseMiddleware<CustomAuthorizationMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 

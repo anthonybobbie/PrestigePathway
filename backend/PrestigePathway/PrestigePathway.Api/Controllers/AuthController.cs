@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Utilities;
 using PrestigePathway.DataAccessLayer.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -32,53 +33,40 @@ namespace PrestigePathway.Api.Controllers
                 return Unauthorized("Invalid username or password.");
             }
 
-             
             return Ok(new { Token = token });
         }
 
-        // Helper method to generate JWT token
-        // private string GenerateJwtToken(User user)
-        // {
-        //     var jwtSettings = _configuration.GetSection("Jwt");
-        //     var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
-        //
-        //     var tokenDescriptor = new SecurityTokenDescriptor
-        //     {
-        //         Subject = new ClaimsIdentity(new[]
-        //         {
-        //             new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-        //             new Claim(ClaimTypes.Name, user.Username)
-        //         }),
-        //         Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryInMinutes"])),
-        //         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-        //         Issuer = jwtSettings["Issuer"],
-        //         Audience = jwtSettings["Audience"]
-        //     };
-        //
-        //     var tokenHandler = new JwtSecurityTokenHandler();
-        //     var token = tokenHandler.CreateToken(tokenDescriptor);
-        //     return tokenHandler.WriteToken(token);
-        // }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] User  user)
+        {
+            var newUser = await _authService.RegisterAsync(user);
 
-        //[HttpPost("register")]
-        //public IActionResult Register([FromBody] User registerRequest)
-        //{
-        //    // Validate input
-        //    if (Users.Any(u => u.Username == registerRequest.Username))
-        //    {
-        //        return BadRequest("Username already exists.");
-        //    }
+            if (newUser == null)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
 
-        //    // Add user to the store (replace with database logic)
-        //    var newUser = new User
-        //    {
-        //        Id = Users.Count + 1,
-        //        Username = registerRequest.Username,
-        //        Password = registerRequest.Password // Hash the password in production
-        //    };
-        //    Users.Add(newUser);
 
-        //    return Ok(new { Message = "User registered successfully." });
-        //}
+            return Ok(new { NewUser = newUser });
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            try
+            {
+                await _authService.ChangePasswordAsync(request);
+
+                return Ok("Password changed successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while changing the password.");
+            }
+        }
     }
 }

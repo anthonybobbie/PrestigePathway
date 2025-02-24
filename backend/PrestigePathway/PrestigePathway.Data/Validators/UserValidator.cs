@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
+using Mapster;
 using PrestigePathway.DataAccessLayer.Models;
 
-namespace PrestigePathway.Data.Services
+namespace PrestigePathway.Data.Validators
 {
     public class UserValidator : AbstractValidator<User>
     {
