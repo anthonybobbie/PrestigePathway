@@ -16,6 +16,8 @@ using ValidationException = FluentValidation.ValidationException;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using PrestigePathway.Data.Utilities;
+using Mapster;
+using PrestigePathway.Data.Models.User;
 
 namespace PrestigePathway.Data.Services
 {
@@ -38,7 +40,7 @@ namespace PrestigePathway.Data.Services
             _changePasswordValidator = changePasswordValidator;
         }
 
-        public async Task<string> LoginAsync(string username, string password)
+        public async Task<AuthUser> LoginAsync(string username, string password)
         {
             // Validate input
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -47,7 +49,7 @@ namespace PrestigePathway.Data.Services
             }
 
             // Fetch user from the repository
-            var user = await _userRepository.Query().FirstOrDefaultAsync(x=>x.Username == username);
+            var user = await _userRepository.Query().FirstOrDefaultAsync(x => x.Username == username);
 
             // Verify the provided password against the stored hashed password
             if (user == null || !VerifyPassword(user.Password, password))
@@ -56,10 +58,10 @@ namespace PrestigePathway.Data.Services
             }
 
             // Generate and return a JWT token
-            return await GenerateJwtToken(user);
+            return new() { Token = await GenerateJwtToken(user), User = user.Adapt<UserDto>() };
         }
 
-        public async Task<User> RegisterAsync(User user)
+        public async Task<UserDto> RegisterAsync(User user)
         {
             // Validate the user object
             var validationResult = await _userValidator.ValidateAsync(user);
@@ -76,19 +78,20 @@ namespace PrestigePathway.Data.Services
 
             // Add the user to the database via the repository
             user.Password = HashPassword(user.Password);
-            return await _userRepository.AddAsync(user);
+            var new_user = await _userRepository.AddAsync(user);
+            return new_user.Adapt<UserDto>();
         }
 
         private async Task<string> GenerateJwtToken(User user)
         {
             // Fetch user roles
             var userRoles = _userRolesRepository.Query().Where(x => x.UserID == user.ID);
-            
+
             var jwtSettings = _configuration.GetSection("Jwt");
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            
+
             var claims = new List<Claim>
             {
                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
@@ -99,8 +102,8 @@ namespace PrestigePathway.Data.Services
             };
 
             var roles = from userRole in _userRolesRepository.Query()
-                join role in _roleRepository.Query() on userRole.UserID equals role.ID
-                select role.Name;
+                        join role in _roleRepository.Query() on userRole.UserID equals role.ID
+                        select role.Name;
             foreach (var _role in roles)
             {
                 if (!string.IsNullOrEmpty(_role))
