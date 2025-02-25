@@ -1,23 +1,24 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using BCrypt.Net;
 using FluentValidation;
+using Mapster;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
+using PrestigePathway.Data.Models.Auth;
+using PrestigePathway.Data.Models.User;
+using PrestigePathway.Data.Models.UserRole;
+using PrestigePathway.Data.Utilities;
 using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using PrestigePathway.Data.Models.Auth;
-using PrestigePathway.Data.Models.UserRole;
 using ValidationException = FluentValidation.ValidationException;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using PrestigePathway.Data.Utilities;
-using Mapster;
-using PrestigePathway.Data.Models.User;
 
 namespace PrestigePathway.Data.Services
 {
@@ -52,13 +53,13 @@ namespace PrestigePathway.Data.Services
             var user = await _userRepository.Query().FirstOrDefaultAsync(x => x.Username == username);
 
             // Verify the provided password against the stored hashed password
-            if (user == null || !VerifyPassword(user.Password, password))
+            if (user == null || !VerifyPassword(password, user.Password))
             {
                 throw new ArgumentException("Invalid username or password");
             }
 
             // Generate and return a JWT token
-            return new() { Token = await GenerateJwtToken(user), User = user.Adapt<UserDto>() };
+            return new AuthUser() { Token = await GenerateJwtToken(user), User = user.Adapt<UserDto>() };
         }
 
         public async Task<UserDto> RegisterAsync(User user)
@@ -120,6 +121,7 @@ namespace PrestigePathway.Data.Services
                 Audience = jwtSettings["Audience"],
                 SigningCredentials = signingCredentials
             };
+            
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
@@ -128,51 +130,12 @@ namespace PrestigePathway.Data.Services
 
         private string HashPassword(string password)
         {
-            //using (var sha256 = SHA256.Create())
-            //{
-            //    byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-            //    byte[] hashedBytes = sha256.ComputeHash(passwordBytes);
-            //    return Convert.ToBase64String(hashedBytes);
-            //}
-
-            // Generate a 128-bit salt using a secure PRNG
-            byte[] salt = new byte[16];
-            using (var randomNumberGenerator = RandomNumberGenerator.Create())
-            {
-                randomNumberGenerator.GetBytes(salt);
-            }
-
-            // Derive a 256-bit subkey
-            var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100_000,
-                numBytesRequested: 32
-            ));
-
-            // Combine the salt and the hash into a single string
-            return $"{Convert.ToBase64String(salt)}:{hashed}";
+            return BCrypt.Net.BCrypt.HashPassword(password, 12);
         }
 
-        private bool VerifyPassword(string hashedPassowrd, string providedPassword)
+        private bool VerifyPassword(string providedPassword, string hashedPassword)
         {
-            // Split the hashed password into salt and hash
-            var parts = hashedPassowrd.Split(":");
-            var salt = Convert.FromBase64String(parts[0]);
-            var storedHash = parts[1];
-
-            // Hash the provided password with the same salt
-            var hashProvidedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: providedPassword,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100_000,
-                numBytesRequested: 32
-            ));
-
-            // Compare the hashes
-            return storedHash == hashProvidedPassword;
+            return BCrypt.Net.BCrypt.Verify(providedPassword, hashedPassword);
         }
 
         public async Task ChangePasswordAsync(ChangePasswordRequest request)
