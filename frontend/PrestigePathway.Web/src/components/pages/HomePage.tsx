@@ -228,8 +228,8 @@ export function HomePage() {
         clientID: bookingData.clientID,
         serviceID: bookingData.serviceID,
         bookingDate: bookingData.bookingDate,
-        startTime: `${bookingData.startTime}:00`,
-        endTime: `${bookingData.endTime}:00`,
+        startTime: `${bookingData.bookingDate}T${bookingData.startTime}:00`,
+        endTime:   `${bookingData.bookingDate}T${bookingData.endTime}:00`,
         status: bookingData.status,
         notes: bookingData.notes,
       };
