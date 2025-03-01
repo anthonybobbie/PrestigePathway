@@ -10,16 +10,11 @@ using System.Threading.Tasks;
 
 namespace PrestigePathway.Data.Models.User
 {
-    public class UserDto:IEntity,IEntityTracker
+    public class UserDto : IEntity,IEntityTracker
     {
         public int ID { get; set; }
         public string Username { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
-    }
-   public class AuthUser
-    {
-        public string Token { get; set; }
-        public UserDto User { get; set; }
     }
 }
