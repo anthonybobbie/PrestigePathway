@@ -8,6 +8,7 @@ import { HomePage } from "./components/pages/HomePage";
 import { LoginPage } from "./components/pages/LoginPage";
 import Navbar from "./components/shared/Navbar";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute"; // Import ProtectedRoute
+import { ServicesPage } from "./components/pages/ServicesPage";
 
 function AppContent() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -23,6 +24,7 @@ function AppContent() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/services" element={<ServicesPage />} />
         </Route>
       </Routes>
     </>
