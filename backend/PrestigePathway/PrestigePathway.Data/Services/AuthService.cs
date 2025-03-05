@@ -1,20 +1,13 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using BCrypt.Net;
 using FluentValidation;
 using Mapster;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Auth;
 using PrestigePathway.Data.Models.User;
-using PrestigePathway.Data.Models.UserRole;
 using PrestigePathway.Data.Utilities;
 using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
@@ -66,7 +59,7 @@ namespace PrestigePathway.Data.Services
         {
             // Validate the user object
             var validationResult = await _userValidator.ValidateAsync(user);
-            if (!validationResult.IsValid)
+       if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);
             }
@@ -83,11 +76,10 @@ namespace PrestigePathway.Data.Services
             return new_user.Adapt<UserDto>();
         }
 
-        private async Task<string> GenerateJwtToken(User user)
+        public async Task<string> GenerateJwtToken(User user)
         {
             // Fetch user roles
             var userRoles = _userRolesRepository.Query().Where(x => x.UserID == user.ID);
-
             var jwtSettings = _configuration.GetSection("Jwt");
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
@@ -95,11 +87,8 @@ namespace PrestigePathway.Data.Services
 
             var claims = new List<Claim>
             {
-               new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-               new Claim(ClaimTypes.Name, user.Username)
-
-                // Add additional claims here...
-                
+                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
             };
 
             var roles = from userRole in _userRolesRepository.Query()
@@ -124,7 +113,6 @@ namespace PrestigePathway.Data.Services
             
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
             return tokenString;
         }
 

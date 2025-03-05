@@ -1,6 +1,5 @@
 ﻿using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Models.Staff;
-using PrestigePathway.Data.Models.StaffAssisstant;
 using PrestigePathway.DataAccessLayer.Models;
 
 namespace PrestigePathway.Api.Controllers

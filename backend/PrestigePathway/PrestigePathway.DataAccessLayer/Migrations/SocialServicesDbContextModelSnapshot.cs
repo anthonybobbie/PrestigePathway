@@ -338,7 +338,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Service", b =>
@@ -751,7 +751,7 @@ namespace PrestigePathway.DataAccessLayer.Migrations
 
                     b.HasIndex("RoleID");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("PrestigePathway.DataAccessLayer.Models.Booking", b =>

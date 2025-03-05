@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Models.ServicePartner;
 using PrestigePathway.DataAccessLayer.Models;

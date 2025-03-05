@@ -7,14 +7,11 @@ using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Services;
 using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Abstractions;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Repositories;
-using System.Security.Claims;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using PrestigePathway.Api.Extensions;
-using System.Reflection.Emit;
 using Microsoft.OpenApi.Models;
 using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Validators;
@@ -47,7 +44,23 @@ namespace PrestigePathway.Api
                 };
             });
 
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddCrudPolicies("Booking");
+                options.AddCrudPolicies("Client");
+                options.AddCrudPolicies("Location");
+                options.AddCrudPolicies("Partner");
+                options.AddCrudPolicies("Payment");
+                options.AddCrudPolicies("Service");
+                options.AddCrudPolicies("ServiceDetail");
+                options.AddCrudPolicies("ServiceLocation");
+                options.AddCrudPolicies("ServiceOption");
+                options.AddCrudPolicies("ServicePartner");
+                options.AddCrudPolicies("ServiceType");
+                options.AddCrudPolicies("StaffAssistant");
+                options.AddCrudPolicies("StaffController");
+                options.AddCrudPolicies("Testimonial");
+            });
 
             // Configure CORS
             builder.Services.AddCors(options =>

@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.UriParser;
 using PrestigePathway.DataAccessLayer;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace PrestigePathway.Api.Infrastructure
 {
     public class CustomAuthorizationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly string _loginEndpoint = "/api/auth/login"; // Adjust to your login endpoint
+        private readonly string _loginEndpoint = "/api/auth/login"; 
 
         public CustomAuthorizationMiddleware(RequestDelegate next)
         {
@@ -28,12 +26,9 @@ namespace PrestigePathway.Api.Infrastructure
             var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ","");
             var jwtToken = jwtHandler.ReadJwtToken(token);
             // Ensure user is authenticated (JWT is present)
-             
-
+            
             // Extract user ID from JWT claims (assumes "sub" or "nameidentifier" claim)
             var userIdClaim = jwtToken.Claims.FirstOrDefault(x=>x.Type == "nameid").Value;
-                 
-
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -43,7 +38,6 @@ namespace PrestigePathway.Api.Infrastructure
 
             // Get required claim for the endpoint (you can extend this logic)
             var requiredClaim = GetRequiredClaimForEndpoint(context.Request.Path, context.Request.Method);
-
             if (string.IsNullOrEmpty(requiredClaim))
             {
                 await _next(context); // No specific claim required, proceed
@@ -65,58 +59,79 @@ namespace PrestigePathway.Api.Infrastructure
             await _next(context);
         }
 
+        private readonly Dictionary<string, string> _endpointPermissions = new()
+        {
+            { "/api/booking", "booking" },
+            { "/api/client", "client" },
+            { "/api/location", "location" },
+            { "/api/partner", "partner" },
+            { "/api/promotion", "promotion" },
+            { "/api/service", "service" },
+            { "/api/servicedetail", "service_detail" },
+            { "/api/servicelocation", "service_location" },
+            { "/api/serviceoption", "service_option" },
+            { "/api/servicepartner", "service_partner" },
+            { "/api/servicetype", "service_type" },
+            { "/api/serviceassistant", "service_assistant" },
+            { "/api/staff", "staff" },
+            { "/api/testimonial", "testimonial" }
+        };
+
         // Define required claims per endpoint (customize based on your needs)
         private string? GetRequiredClaimForEndpoint(PathString path, string method)
         {
-            switch (method)
-            {
-                case "GET":
-                    // GET ENDPOINTS
-                    // Example mapping; replace with your actual endpoints and claims
-                    return path.Value switch
-                    {
-                        string p when p.StartsWith("/api/booking") =>  "Read:booking",
-                        string p when p.StartsWith("/api/client") =>   "Read:client",
-                        string p when p.StartsWith("/api/location") => "Read:location",
-                        _ => null // No specific claim required
-                    };
-                    
-                case "POST":
-                    // GET ENDPOINTS
-                    // Example mapping; replace with your actual endpoints and claims
-                    return path.Value switch
-                    {
-                        string p when p.StartsWith("/api/booking") =>  "Post:booking",
-                        string p when p.StartsWith("/api/client") =>   "Post:client",
-                        string p when p.StartsWith("/api/location") => "Post:location",
-                        _ => null // No specific claim required
-                    };
-                    
-                case "DELETE":
-                    // GET ENDPOINTS
-                    // Example mapping; replace with your actual endpoints and claims
-                    return path.Value switch
-                    {
-                        string p when p.StartsWith("/api/booking") => "Delete:booking",
-                        string p when p.StartsWith("/api/client") => "Delete:client",
-                        string p when p.StartsWith("/api/location") => "Delete:location",
-                        _ => null // No specific claim required
-                    };
-                     
-                case "PUT":
-                    // GET ENDPOINTS
-                    // Example mapping; replace with your actual endpoints and claims
-                    return path.Value switch
-                    {
-                        string p when p.StartsWith("/api/booking") => "Put:booking",
-                        string p when p.StartsWith("/api/client") => "Put:client",
-                        string p when p.StartsWith("/api/location") => "Put:location",
-                        _ => null // No specific claim required
-                    };
-                default:
-                    break;
-            }
-            return null;
+            // switch (method)
+            // {
+            //     case "GET":
+            //         // GET ENDPOINTS
+            //         // Example mapping; replace with your actual endpoints and claims
+            //         return path.Value switch
+            //         {
+            //             string p when p.StartsWith("/api/booking") =>  "Read:booking",
+            //             string p when p.StartsWith("/api/client") =>   "Read:client",
+            //             string p when p.StartsWith("/api/location") => "Read:location",
+            //             _ => null // No specific claim required
+            //         };
+            //         
+            //     case "POST":
+            //         // GET ENDPOINTS
+            //         // Example mapping; replace with your actual endpoints and claims
+            //         return path.Value switch
+            //         {
+            //             string p when p.StartsWith("/api/booking") =>  "Post:booking",
+            //             string p when p.StartsWith("/api/client") =>   "Post:client",
+            //             string p when p.StartsWith("/api/location") => "Post:location",
+            //             _ => null // No specific claim required
+            //         };
+            //         
+            //     case "DELETE":
+            //         // GET ENDPOINTS
+            //         // Example mapping; replace with your actual endpoints and claims
+            //         return path.Value switch
+            //         {
+            //             string p when p.StartsWith("/api/booking") => "Delete:booking",
+            //             string p when p.StartsWith("/api/client") => "Delete:client",
+            //             string p when p.StartsWith("/api/location") => "Delete:location",
+            //             _ => null // No specific claim required
+            //         };
+            //          
+            //     case "PUT":
+            //         // GET ENDPOINTS
+            //         // Example mapping; replace with your actual endpoints and claims
+            //         return path.Value switch
+            //         {
+            //             string p when p.StartsWith("/api/booking") => "Put:booking",
+            //             string p when p.StartsWith("/api/client") => "Put:client",
+            //             string p when p.StartsWith("/api/location") => "Put:location",
+            //             _ => null // No specific claim required
+            //         };
+            //     default:
+            //         break;
+            // }
+
+            return (from entry in _endpointPermissions 
+                where path.Value.StartsWith(entry.Key, StringComparison.OrdinalIgnoreCase) 
+                select $"{method}:{entry.Value}").FirstOrDefault();
         }
 
         // Check if the user has the required claim in the UserRole table
