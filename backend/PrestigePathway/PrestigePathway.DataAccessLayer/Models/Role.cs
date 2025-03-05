@@ -7,7 +7,7 @@ public class Role : IEntity, IEntityTracker
 {
     public int ID { get; set; }
     public string Name { get; set; }
-    public ICollection<UserRole>? UserRoles { get; set; } = new List<UserRole>();
     public DateTime? ModifiedOnUtc { get; set; }
     public DateTime CreatedOnUtc { get; set; }
+    public ICollection<RolePermission>?  RolePermissions { get; set; }
 }

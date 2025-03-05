@@ -191,10 +191,7 @@ namespace PrestigePathway.DataAccessLayer
 
             modelBuilder.Entity<UserRole>(entity =>
             {
-                entity.HasKey(ur => new { ur.UserID, ur.RoleID });
-                entity.HasOne(ur => ur.Role)
-                    .WithMany(u => u.UserRoles)
-                    .HasForeignKey(ur => ur.RoleID);
+                entity.HasKey(e => e.ID);
                 entity.Property(ur => ur.CreatedOnUtc).HasDefaultValueSql("GETUTCDATE()");
             });
             

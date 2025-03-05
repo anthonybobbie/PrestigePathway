@@ -75,7 +75,7 @@ namespace PrestigePathway.Api.Infrastructure
                     // Example mapping; replace with your actual endpoints and claims
                     return path.Value switch
                     {
-                        string p when p.StartsWith("/api/booking") =>  "Read:booking",
+                        string p when p.StartsWith("/api/booking/{id}/service") =>  "Read:booking",
                         string p when p.StartsWith("/api/client") =>   "Read:client",
                         string p when p.StartsWith("/api/location") => "Read:location",
                         _ => null // No specific claim required
