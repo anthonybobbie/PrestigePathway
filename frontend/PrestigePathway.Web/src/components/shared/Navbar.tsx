@@ -7,7 +7,8 @@ const Navbar = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
-    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setIsAuthenticated(false);
     window.location.href = "/login";
   };
@@ -36,7 +37,18 @@ const Navbar = () => {
           >
             Dashboard
           </Typography>
-          <Button color="inherit" onClick={handleLogout} sx={{ color: "white" }}>
+          <Typography
+            component={RouterLink}
+            to="/services"
+            sx={{ color: "white", textDecoration: "none" }}
+          >
+            Services
+          </Typography>
+          <Button
+            color="inherit"
+            onClick={handleLogout}
+            sx={{ color: "white" }}
+          >
             Logout
           </Button>
         </Box>
@@ -46,8 +58,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
- 
-
