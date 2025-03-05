@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -28,16 +30,21 @@ namespace PrestigePathway.Data.Services
         private readonly IConfiguration _configuration;
         private readonly IValidator<User> _userValidator;
         private readonly IRepository<UserRole> _userRolesRepository;
-        private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<RolePermission> rolePermissionRepository;
+        private readonly IRepository<Role> _rolePermissionRepository;
         private readonly IValidator<ChangePasswordRequest> _changePasswordValidator;
 
-        public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator, IRepository<UserRole> userRolesRepository, IValidator<ChangePasswordRequest> changePasswordValidator)
+        public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator,
+            IRepository<UserRole> userRolesRepository,
+            IRepository<RolePermission> rolePermissionRepository,
+            IValidator<ChangePasswordRequest> changePasswordValidator)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _userValidator = userValidator;
             _userRolesRepository = userRolesRepository;
-            _roleRepository = roleRepository;
+            this.rolePermissionRepository = rolePermissionRepository;
+            _rolePermissionRepository = roleRepository;
             _changePasswordValidator = changePasswordValidator;
         }
 
@@ -85,8 +92,7 @@ namespace PrestigePathway.Data.Services
 
         private async Task<string> GenerateJwtToken(User user)
         {
-            // Fetch user roles
-            var userRoles = _userRolesRepository.Query().Where(x => x.UserID == user.ID);
+
 
             var jwtSettings = _configuration.GetSection("Jwt");
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -102,15 +108,13 @@ namespace PrestigePathway.Data.Services
                 
             };
 
-            var roles = from userRole in _userRolesRepository.Query()
-                        join role in _roleRepository.Query() on userRole.UserID equals role.ID
-                        select role.Name;
-            foreach (var _role in roles)
+
+            // Fetch user roles
+            var userRole = await _userRolesRepository.Query().FirstOrDefaultAsync(x => x.UserID == user.ID);
+            if (userRole != null)
             {
-                if (!string.IsNullOrEmpty(_role))
-                {
-                    claims.Add(new Claim(_role, _role));
-                }
+                var rolePermissions = rolePermissionRepository.Query().Include(x => x.Permission).Where(x => x.RoleID == userRole.RoleID);
+                claims.AddRange(rolePermissions.Select(x => new Claim("Permission", x.Permission.Name)));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -121,7 +125,7 @@ namespace PrestigePathway.Data.Services
                 Audience = jwtSettings["Audience"],
                 SigningCredentials = signingCredentials
             };
-            
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 

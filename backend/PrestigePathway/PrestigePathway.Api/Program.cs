@@ -20,6 +20,7 @@ using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Validators;
 using PrestigePathway.Data.Utilities;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PrestigePathway.Api
 {
@@ -47,7 +48,19 @@ namespace PrestigePathway.Api
                 };
             });
 
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options =>
+            {
+                using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<SocialServicesDbContext>();
+                    var permissions = dbContext.Permissions.Select(p => p.Name).ToList(); // Fetch permissions from DB
+
+                    foreach (var permission in permissions)
+                    {
+                        options.AddPolicy(permission, policy => policy.Requirements.Add(new PermissionRequirement(permission)));
+                    }
+                }
+            });
 
             // Configure CORS
             builder.Services.AddCors(options =>
@@ -90,7 +103,7 @@ namespace PrestigePathway.Api
             builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
-
+            builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
