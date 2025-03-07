@@ -2,27 +2,30 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Abstractions;
-using System.Net;
-
 namespace PrestigePathway.Api.Controllers
 {
+
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public abstract class BaseController<TEntity, TService, TResponse,TCreateDto, TUpdateDto> : ControllerBase
-        where TEntity : class
-        where TService : IService<TEntity, TResponse>
-        where TResponse : class
+    public abstract class BaseController<TEntity, TService, TResponse, TCreateDto, TUpdateDto> : ControllerBase
+             where TEntity : class
+             where TService : IService<TEntity, TResponse>
+             where TResponse : class
     {
         protected readonly IService<TEntity, TResponse> _service;
-        protected readonly ILogger<BaseController<TEntity, TService, TResponse, TCreateDto,TUpdateDto>> _logger;
+        protected readonly ILogger<BaseController<TEntity, TService, TResponse, TCreateDto, TUpdateDto>> _logger;
 
-        public BaseController(IService<TEntity, TResponse> service, ILogger<BaseController<TEntity, TService, TResponse, TCreateDto,TUpdateDto>> logger)
+        public BaseController(IService<TEntity, TResponse> service, ILogger<BaseController<TEntity, TService, TResponse, TCreateDto, TUpdateDto>> logger)
         {
             _service = service;
             _logger = logger;
         }
+
+        protected string ControllerName => GetType().Name.Replace("Controller", ""); // Get dynamic controller name
 
         // GET: api/[controller]
         [HttpGet]
@@ -31,6 +34,15 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
+                var permission = $"{ControllerName}_GET"; // Dynamically set permission
+                var authorizationService = HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authResult = await authorizationService.AuthorizeAsync(User, null, new PermissionRequirement(permission));
+
+                if (!authResult.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 var entities = await _service.GetAllAsync();
                 return DataResponse("Fetched successfully", entities);
             }
@@ -49,6 +61,15 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
+                var permission = $"{ControllerName}_GET";
+                var authorizationService = HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authResult = await authorizationService.AuthorizeAsync(User, null, new PermissionRequirement(permission));
+
+                if (!authResult.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 var entity = await _service.GetByIdAsync(id);
                 if (entity == null)
                 {
@@ -66,16 +87,23 @@ namespace PrestigePathway.Api.Controllers
         // POST: api/[controller]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public virtual async Task<ActionResult<ApiResponse<TResponse>>> Create(TCreateDto  createDto)
+        public virtual async Task<ActionResult<ApiResponse<TResponse>>> Create(TCreateDto createDto)
         {
             try
             {
-                 
+                var permission = $"{ControllerName}_POST";
+                var authorizationService = HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authResult = await authorizationService.AuthorizeAsync(User, null, new PermissionRequirement(permission));
+
+                if (!authResult.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 var entity = createDto.Adapt<TEntity>();
-  
                 var createdEntity = await _service.AddAsync(entity);
                 var response = await _service.GetByIdAsync(GetEntityId(entity));
-                
+
                 return CreatedAtAction(nameof(GetById), new { id = GetEntityId(entity) },
                     new ApiResponse<TResponse> { Success = true, Message = "Entity created successfully", Data = response });
             }
@@ -94,6 +122,15 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
+                var permission = $"{ControllerName}_PUT";
+                var authorizationService = HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authResult = await authorizationService.AuthorizeAsync(User, null, new PermissionRequirement(permission));
+
+                if (!authResult.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 if (id != GetEntityId(entity))
                 {
                     return BadRequest(new ApiResponse<object> { Success = false, Message = "Mismatched ID in request." });
@@ -122,6 +159,15 @@ namespace PrestigePathway.Api.Controllers
         {
             try
             {
+                var permission = $"{ControllerName}_DELETE";
+                var authorizationService = HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                var authResult = await authorizationService.AuthorizeAsync(User, null, new PermissionRequirement(permission));
+
+                if (!authResult.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 var entity = await _service.GetByIdAsync(id);
                 if (entity == null)
                 {

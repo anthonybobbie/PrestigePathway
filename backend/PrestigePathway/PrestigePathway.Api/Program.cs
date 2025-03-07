@@ -7,16 +7,20 @@ using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Services;
 using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Abstractions;
+using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Repositories;
+using System.Security.Claims;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using PrestigePathway.Api.Extensions;
+using System.Reflection.Emit;
 using Microsoft.OpenApi.Models;
 using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Validators;
 using PrestigePathway.Data.Utilities;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PrestigePathway.Api
 {
@@ -46,20 +50,16 @@ namespace PrestigePathway.Api
 
             builder.Services.AddAuthorization(options =>
             {
-                options.AddCrudPolicies("Booking");
-                options.AddCrudPolicies("Client");
-                options.AddCrudPolicies("Location");
-                options.AddCrudPolicies("Partner");
-                options.AddCrudPolicies("Payment");
-                options.AddCrudPolicies("Service");
-                options.AddCrudPolicies("ServiceDetail");
-                options.AddCrudPolicies("ServiceLocation");
-                options.AddCrudPolicies("ServiceOption");
-                options.AddCrudPolicies("ServicePartner");
-                options.AddCrudPolicies("ServiceType");
-                options.AddCrudPolicies("StaffAssistant");
-                options.AddCrudPolicies("StaffController");
-                options.AddCrudPolicies("Testimonial");
+                using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<SocialServicesDbContext>();
+                    var permissions = dbContext.Permissions.Select(p => p.Name).ToList(); // Fetch permissions from DB
+
+                    foreach (var permission in permissions)
+                    {
+                        options.AddPolicy(permission, policy => policy.Requirements.Add(new PermissionRequirement(permission)));
+                    }
+                }
             });
 
             // Configure CORS
@@ -103,7 +103,7 @@ namespace PrestigePathway.Api
             builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
-
+            builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
