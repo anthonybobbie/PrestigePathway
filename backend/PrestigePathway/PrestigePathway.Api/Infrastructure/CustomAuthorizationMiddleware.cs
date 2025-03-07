@@ -80,55 +80,6 @@ namespace PrestigePathway.Api.Infrastructure
         // Define required claims per endpoint (customize based on your needs)
         private string? GetRequiredClaimForEndpoint(PathString path, string method)
         {
-            // switch (method)
-            // {
-            //     case "GET":
-            //         // GET ENDPOINTS
-            //         // Example mapping; replace with your actual endpoints and claims
-            //         return path.Value switch
-            //         {
-            //             string p when p.StartsWith("/api/booking") =>  "Read:booking",
-            //             string p when p.StartsWith("/api/client") =>   "Read:client",
-            //             string p when p.StartsWith("/api/location") => "Read:location",
-            //             _ => null // No specific claim required
-            //         };
-            //         
-            //     case "POST":
-            //         // GET ENDPOINTS
-            //         // Example mapping; replace with your actual endpoints and claims
-            //         return path.Value switch
-            //         {
-            //             string p when p.StartsWith("/api/booking") =>  "Post:booking",
-            //             string p when p.StartsWith("/api/client") =>   "Post:client",
-            //             string p when p.StartsWith("/api/location") => "Post:location",
-            //             _ => null // No specific claim required
-            //         };
-            //         
-            //     case "DELETE":
-            //         // GET ENDPOINTS
-            //         // Example mapping; replace with your actual endpoints and claims
-            //         return path.Value switch
-            //         {
-            //             string p when p.StartsWith("/api/booking") => "Delete:booking",
-            //             string p when p.StartsWith("/api/client") => "Delete:client",
-            //             string p when p.StartsWith("/api/location") => "Delete:location",
-            //             _ => null // No specific claim required
-            //         };
-            //          
-            //     case "PUT":
-            //         // GET ENDPOINTS
-            //         // Example mapping; replace with your actual endpoints and claims
-            //         return path.Value switch
-            //         {
-            //             string p when p.StartsWith("/api/booking") => "Put:booking",
-            //             string p when p.StartsWith("/api/client") => "Put:client",
-            //             string p when p.StartsWith("/api/location") => "Put:location",
-            //             _ => null // No specific claim required
-            //         };
-            //     default:
-            //         break;
-            // }
-
             return (from entry in _endpointPermissions 
                 where path.Value.StartsWith(entry.Key, StringComparison.OrdinalIgnoreCase) 
                 select $"{method}:{entry.Value}").FirstOrDefault();
