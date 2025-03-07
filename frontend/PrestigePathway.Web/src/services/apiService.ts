@@ -1,27 +1,27 @@
-import axios, { AxiosRequestConfig, AxiosInstance, AxiosError } from 'axios';
-import config from '../../config';
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosError } from "axios";
+import config from "../../config";
 
 // Initialize axios instance
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: config.API_BASE_URL,
   timeout: 10000, // Increased timeout for better UX
   headers: {
-    'Content-Type': 'application/json',
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // Enhanced request interceptor
 axiosInstance.interceptors.request.use(
-  (config:any) => {
+  (config: any) => {
     const token = getAuthToken();
     const mergedHeaders = {
       ...config.headers,
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
     return {
       ...config,
-      headers: mergedHeaders
+      headers: mergedHeaders,
     };
   },
   (error) => Promise.reject(error)
@@ -42,20 +42,20 @@ axiosInstance.interceptors.response.use(
 // Auth token management
 const getAuthToken = (): string | null => {
   try {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem("authToken");
   } catch (error) {
-    console.error('Error accessing localStorage:', error);
+    console.error("Error accessing localStorage:", error);
     return null;
   }
 };
 
 const storeAuthToken = (token: string): void => {
-  localStorage.setItem('authToken', token);
+  localStorage.setItem("authToken", token);
 };
 
 const clearAuth = (): void => {
-  localStorage.removeItem('authToken');
-  delete axiosInstance.defaults.headers.common['Authorization'];
+  localStorage.removeItem("authToken");
+  delete axiosInstance.defaults.headers.common["Authorization"];
 };
 
 const apiService = {
@@ -63,7 +63,7 @@ const apiService = {
   login: async (username: string, password: string): Promise<void> => {
     try {
       const response = await axiosInstance.post<{ token: string }>(
-        '/auth/login',
+        "/auth/login",
         { username, password }
       );
 
@@ -78,7 +78,7 @@ const apiService = {
 
   logout: async (): Promise<void> => {
     try {
-      await axiosInstance.post('/auth/logout');
+      await axiosInstance.post("/auth/logout");
     } finally {
       clearAuth();
     }
@@ -89,7 +89,10 @@ const apiService = {
   },
 
   // Data methods
-  get: async <T>(endpoint: string, configOptions?: AxiosRequestConfig): Promise<T> => {
+  get: async <T>(
+    endpoint: string,
+    configOptions?: AxiosRequestConfig
+  ): Promise<T> => {
     const response = await axiosInstance.get<T>(endpoint, configOptions);
     return response.data;
   },
@@ -99,28 +102,34 @@ const apiService = {
     data: TRequest,
     configOptions?: AxiosRequestConfig
   ): Promise<TResponse> => {
-    const response = await axiosInstance.post<TResponse>(endpoint, data, configOptions);
+    const response = await axiosInstance.post<TResponse>(
+      endpoint,
+      data,
+      configOptions
+    );
     return response.data;
   },
-
 
   put: async <TRequest, TResponse>(
     endpoint: string,
     data: TRequest,
     configOptions?: AxiosRequestConfig
   ): Promise<TResponse> => {
-    const response = await axiosInstance.put<TResponse>(endpoint, data, configOptions);
+    const response = await axiosInstance.put<TResponse>(
+      endpoint,
+      data,
+      configOptions
+    );
     return response.data;
   },
 
-  delete: async <T>(endpoint: string, configOptions?: AxiosRequestConfig): Promise<T> => {
+  delete: async <T>(
+    endpoint: string,
+    configOptions?: AxiosRequestConfig
+  ): Promise<T> => {
     const response = await axiosInstance.delete<T>(endpoint, configOptions);
     return response.data;
   },
-
-
-
 };
-
 
 export default apiService;
