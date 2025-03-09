@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
@@ -7,14 +8,11 @@ using PrestigePathway.Data.Abstractions;
 using PrestigePathway.Data.Services;
 using PrestigePathway.DataAccessLayer;
 using PrestigePathway.DataAccessLayer.Abstractions;
-using PrestigePathway.DataAccessLayer.Models;
 using PrestigePathway.DataAccessLayer.Repositories;
-using System.Security.Claims;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using PrestigePathway.Api.Extensions;
-using System.Reflection.Emit;
 using Microsoft.OpenApi.Models;
 using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Validators;
@@ -98,6 +96,7 @@ namespace PrestigePathway.Api
             builder.Services.AddScoped(typeof(IService<,>), typeof(BaseService<,>));
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             // Configure FluentValidation
             builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();

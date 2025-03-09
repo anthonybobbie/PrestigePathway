@@ -22,6 +22,7 @@ namespace PrestigePathway.Test
         private Mock<IConfiguration> _configurationMock;
         private Mock<IValidator<User>> _userValidatorMock;
         private Mock<IValidator<ChangePasswordRequest>> _changePasswordValidatorMock;
+        private Mock<IRepository<RolePermission>> _rolePermissionRepositoryMock;
         private AuthService _authService;
         private DbContextOptions<TestDbContext> _dbContextOptions;
 
@@ -39,6 +40,7 @@ namespace PrestigePathway.Test
             _configurationMock = new Mock<IConfiguration>();
             _userValidatorMock = new Mock<IValidator<User>>();
             _changePasswordValidatorMock = new Mock<IValidator<ChangePasswordRequest>>();
+            _rolePermissionRepositoryMock = new Mock<IRepository<RolePermission>>();
             
             // Mock configuration for JWT settings
             var jwtSectionMock = new Mock<IConfigurationSection>();
@@ -59,6 +61,7 @@ namespace PrestigePathway.Test
                 _configurationMock.Object,
                 _userValidatorMock.Object,
                 _userRolesRepositoryMock.Object,
+                _rolePermissionRepositoryMock.Object,
                 _changePasswordValidatorMock.Object
             );
         }
@@ -208,9 +211,9 @@ namespace PrestigePathway.Test
             _configurationMock.Setup(c => c["Jwt:Key"]).Returns("SuperSecretKey12345");
             _configurationMock.Setup(c => c["Jwt:Issuer"]).Returns("TestIssuer");
             _configurationMock.Setup(c => c["Jwt:Audience"]).Returns("TestAudience");
-
+        
             var token = await _authService.GenerateJwtToken(user);
-
+        
             Assert.NotNull(token);
             Assert.IsNotEmpty(token);
         }
