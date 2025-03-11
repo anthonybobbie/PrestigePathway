@@ -1,5 +1,4 @@
 ﻿using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Client;
 using PrestigePathway.Data.Models.Location;
 using PrestigePathway.DataAccessLayer.Models;
 

@@ -1,22 +1,13 @@
-﻿using System;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using BCrypt.Net;
 using FluentValidation;
 using Mapster;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Auth;
 using PrestigePathway.Data.Models.User;
-using PrestigePathway.Data.Models.UserRole;
 using PrestigePathway.Data.Utilities;
 using PrestigePathway.DataAccessLayer.Abstractions;
 using PrestigePathway.DataAccessLayer.Models;
@@ -30,8 +21,8 @@ namespace PrestigePathway.Data.Services
         private readonly IConfiguration _configuration;
         private readonly IValidator<User> _userValidator;
         private readonly IRepository<UserRole> _userRolesRepository;
-        private readonly IRepository<RolePermission> rolePermissionRepository;
-        private readonly IRepository<Role> _rolePermissionRepository;
+        private readonly IRepository<RolePermission> _rolePermissionRepository;
+        private readonly IRepository<Role> _roleRepository;
         private readonly IValidator<ChangePasswordRequest> _changePasswordValidator;
 
         public AuthService(IRepository<User> userRepository, IRepository<Role> roleRepository, IConfiguration configuration, IValidator<User> userValidator,
@@ -43,9 +34,10 @@ namespace PrestigePathway.Data.Services
             _configuration = configuration;
             _userValidator = userValidator;
             _userRolesRepository = userRolesRepository;
-            this.rolePermissionRepository = rolePermissionRepository;
-            _rolePermissionRepository = roleRepository;
+            _rolePermissionRepository = rolePermissionRepository;
+            _roleRepository = roleRepository;
             _changePasswordValidator = changePasswordValidator;
+            _roleRepository = roleRepository;
         }
 
         public async Task<AuthUser> LoginAsync(string username, string password)
@@ -90,7 +82,7 @@ namespace PrestigePathway.Data.Services
             return new_user.Adapt<UserDto>();
         }
 
-        private async Task<string> GenerateJwtToken(User user)
+        public async Task<string> GenerateJwtToken(User user)
         {
 
 
@@ -113,7 +105,7 @@ namespace PrestigePathway.Data.Services
             var userRole = await _userRolesRepository.Query().FirstOrDefaultAsync(x => x.UserID == user.ID);
             if (userRole != null)
             {
-                var rolePermissions = rolePermissionRepository.Query().Include(x => x.Permission).Where(x => x.RoleID == userRole.RoleID);
+                var rolePermissions = _rolePermissionRepository.Query().Include(x => x.Permission).Where(x => x.RoleID == userRole.RoleID);
                 claims.AddRange(rolePermissions.Select(x => new Claim("Permission", x.Permission.Name)));
             }
 

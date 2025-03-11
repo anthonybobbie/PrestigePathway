@@ -1,12 +1,5 @@
 ﻿using PrestigePathway.DataAccessLayer.Abstractions;
-using PrestigePathway.DataAccessLayer.Migrations;
 using PrestigePathway.DataAccessLayer.Repositories;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrestigePathway.Data.Models.User
 {

@@ -1,5 +1,4 @@
 ﻿using PrestigePathway.Data.Abstractions;
-using PrestigePathway.Data.Models.Partner;
 using PrestigePathway.Data.Models.Payment;
 using PrestigePathway.DataAccessLayer.Models;
 
