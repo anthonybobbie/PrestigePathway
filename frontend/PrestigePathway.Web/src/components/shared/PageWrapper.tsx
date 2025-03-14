@@ -1,19 +1,23 @@
 import { Box } from "@mui/material";
+import { ReactNode } from "react";
 
-const PageWrapper = ({ children }) => {
+interface PageWrapperProps {
+  children: ReactNode;
+}
+
+const PageWrapper = ({ children }: PageWrapperProps) => {
   return (
     <Box
       sx={{
-        position: "relative", // Ensures it's positioned correctly in normal flow
-        top: "50px", // Adjust for navbar height
+        position: "relative",
+        top: "50px",
         left: 0,
         width: "90vw",
-        minWidth: "calc(100vw - 84px)", // Full height minus navbar
-        minHeight: "calc(100vh - 64px)", // Full height minus navbar
+        minWidth: "calc(100vw - 84px)",
+        minHeight: "calc(100vh - 64px)",
         padding: "20px",
-        display: "block", // Prevents centering if parent is flex
-        background: "linear-gradient(to right, #6a11cb, #2575fc)", // Gradient background
-
+        display: "block",
+        background: "linear-gradient(to right, #6a11cb, #2575fc)",
       }}
     >
       {children}

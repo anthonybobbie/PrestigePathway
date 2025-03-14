@@ -2,11 +2,14 @@ import { createContext, useState, useEffect } from "react";
 
 // create state { isAuthenticated, setIsAuthenticated }
 
-const state:any = null;
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+const state: any = null;
 
 export const AuthContext = createContext({ ...state });
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Check if user is authenticated from cookies
@@ -14,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("authToken="));
-      setIsAuthenticated(!!token);
+    setIsAuthenticated(!!token);
   }, []);
 
   return (

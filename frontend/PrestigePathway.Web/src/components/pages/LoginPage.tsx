@@ -5,7 +5,7 @@ import apiService from '../../services/apiService';
 import { useNavigate } from 'react-router-dom'; // Import for navigation
 import { AuthContext } from '../../context/AuthContext';
 export function LoginPage() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const {  setIsAuthenticated } = useContext(AuthContext);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ const handleSubmit = async (event: React.FormEvent) => {
 
   try {
     // Add withCredentials to handle cookies
-    const response = await apiService.login( userName, password );
+    await apiService.login( userName, password );
 
     // The server should set the cookie, no need to handle it here
     setIsAuthenticated(true);
