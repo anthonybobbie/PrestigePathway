@@ -68,7 +68,7 @@ namespace PrestigePathway.Api
                 options.AddPolicy("AllowSpecificOrigins", policy =>
                 {
                     var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
-                    policy.WithOrigins(allowedOrigins ?? Array.Empty<string>()) 
+                    policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
