@@ -49,7 +49,7 @@ namespace PrestigePathway.DataAccessLayer.Repositories
             return entity;
         }
         
-        public  IQueryable<TEntity> Query()
+        public IQueryable<TEntity> Query()
         {
             return  _context.Set<TEntity>();
         }
