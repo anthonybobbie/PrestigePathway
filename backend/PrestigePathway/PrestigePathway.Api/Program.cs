@@ -18,6 +18,7 @@ using PrestigePathway.Api.Infrastructure;
 using PrestigePathway.Data.Validators;
 using PrestigePathway.Data.Utilities;
 using System.Text.Json;
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authorization;
 
 namespace PrestigePathway.Api
@@ -42,7 +43,8 @@ namespace PrestigePathway.Api
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"])),
+                    ClockSkew = TimeSpan.Zero 
                 };
             });
 
@@ -65,17 +67,21 @@ namespace PrestigePathway.Api
             {
                 options.AddPolicy("AllowSpecificOrigins", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://prestigepathway.anthonybobbielimited.com") // Replace with your frontend URL
+                    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+                    policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
                 });
             });
+            
             var modelBuilder = new ODataConventionModelBuilder();
             // Add Controllers with OData Support
             builder.Services.AddControllers()
                 .AddOData(options => options
-                    .EnableQueryFeatures().Count()
+                    .EnableQueryFeatures()
+                    .Select().Expand().Filter().OrderBy()
+                    .Count().SetMaxTop(100)
                     .AddRouteComponents("odata", modelBuilder.AddPrestigePathwayEdmModel()))
                 .AddJsonOptions(options =>
                 {
@@ -92,6 +98,14 @@ namespace PrestigePathway.Api
             builder.Services.AddDbContext<SocialServicesDbContext>(option =>
                 option.UseSqlServer(builder.Configuration.GetConnectionString("PrestigePathConnection")));
 
+            // Scrutor
+            // builder.Services.Scan(scan => scan
+            //     .FromAssemblies(Assembly.GetExecutingAssembly())
+            //     .AddClasses(classes => classes.AssignableTo(typeof(IService<,>))).AsImplementedInterfaces().WithScopedLifetime()
+            //     .AddClasses(classes => classes.AssignableTo(typeof(IRepository<>))).AsImplementedInterfaces().WithScopedLifetime()
+            //     .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>))).AsImplementedInterfaces().WithScopedLifetime()
+            // );
+            
             //Register services
             builder.Services.AddScoped(typeof(IService<,>), typeof(BaseService<,>));
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -103,6 +117,7 @@ namespace PrestigePathway.Api
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
             builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -133,6 +148,12 @@ namespace PrestigePathway.Api
                 });
             });
 
+            builder.Services.AddMemoryCache();
+            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+            builder.Services.AddInMemoryRateLimiting();
+
             var app = builder.Build();
 
             // Configure Middleware Pipeline
@@ -140,6 +161,27 @@ namespace PrestigePathway.Api
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+            else
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.RoutePrefix = "docs";
+                });
+
+                app.Use(async (context, next) =>
+                {
+                    if (context.Request.Path.StartsWithSegments("/swagger") &&
+                        !context.User.Identity.IsAuthenticated)
+                    {
+                        context.Response.StatusCode = 401;
+                        await context.Response.WriteAsync("Unathorized access to Swagger");
+                        return;
+                    }
+
+                    await next();
+                });
             }
             
             app.UseHttpsRedirection();
