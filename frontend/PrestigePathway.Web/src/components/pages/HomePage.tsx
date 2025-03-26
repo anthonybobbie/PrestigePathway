@@ -24,10 +24,10 @@ import {
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import apiService from "../../services/apiService";
-import { IBooking } from "../../models/IBooking";
 import { IService } from "../../models/IService";
 import { IClient } from "../../models/IClient";
 import Confirmation from "../shared/Confirmation";
+import { IBooking } from "../../models/IBooking";
 
 const style = {
   position: "absolute",
@@ -48,7 +48,7 @@ export function HomePage() {
   const [bookings, setBookings] = useState<IBooking[]>([]);
   const [services, setServices] = useState<IService[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
-  const [selectedBooking, setSelectedBooking] = useState<IBooking | null>(null);
+  //const [selectedBooking, setSelectedBooking] = useState<IBooking | null>(null);
   const [editedBooking, setEditedBooking] = useState<IBooking | null>(null);
   const [bookingData, setBookingData] = useState({
     clientID: 0,
@@ -123,7 +123,7 @@ export function HomePage() {
     }
   }, [filteredBookings.length]);
 
-  const handlePageChange = (event: unknown, newPage: number) => {
+  const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
@@ -326,7 +326,7 @@ export function HomePage() {
                 <TableBody>
                   {filteredBookings
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((booking) => (
+                    .map((booking:IBooking) => (
                       <TableRow key={booking.id}>
                         <TableCell>{booking.id}</TableCell>
                         <TableCell>
@@ -378,7 +378,7 @@ export function HomePage() {
             component="div"
             count={filteredBookings.length}
             page={page}
-            onPageChange={handlePageChange}
+            onPageChange={(_, page: number)=>handlePageChange(page)}
             rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[]}
           />

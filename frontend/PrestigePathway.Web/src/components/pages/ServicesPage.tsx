@@ -46,7 +46,7 @@ function a11yProps(index: number) {
 export function ServicesPage() {
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = ( newValue: number) => {
     setValue(newValue);
   };
 
@@ -64,7 +64,7 @@ export function ServicesPage() {
           orientation="vertical"
           variant="scrollable"
           value={value}
-          onChange={handleChange}
+          onChange={(_, page: number)=>handleChange(page)}
           aria-label="Vertical tabs example"
           sx={{
             borderRight: 1,
