@@ -65,7 +65,7 @@ namespace PrestigePathway.Api
             {
                 options.AddPolicy("AllowSpecificOrigins", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://prestigepathway.anthonybobbielimited.com") // Replace with your frontend URL
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://prestigepathway.anthonybobbielimited.com", "http://localhost:8100") // Replace with your frontend URL
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
